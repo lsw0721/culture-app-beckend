@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: culture-app           # 애플리케이션 이름 (Spring Boot Actuator 등에서 사용됨)
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/culture_db?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    # MySQL 접속 URL: localhost의 3306 포트에 있는 culture_db 사용
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # MySQL 8용 JDBC 드라이버 클래스
+    username: root               # DB 접속용 사용자 이름
+    password: Dnjstnddl12!       # DB 접속용 비밀번호 (보안상 실제 배포 시엔 별도 관리 권장)
+
+  jpa:
+    hibernate:
+      ddl-auto: create           # 앱 실행 시 테이블을 **항상 새로 생성** (기존 데이터 삭제됨)
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        #show-sql: true          # (주석 처리됨) System.out에 SQL 출력. 대신 아래 로그 방식 사용
+        format_sql: true         # SQL을 보기 좋게 정렬해서 출력 (개행/들여쓰기 등)
+
+logging:
+  level:
+    org.hibernate.SQL: debug     # Hibernate가 생성한 SQL 쿼리를 로그(debug 레벨)로 출력
