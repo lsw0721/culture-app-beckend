@@ -23,4 +23,10 @@ public class CommentLike {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public CommentLike(Comment comment, Member member) {
+        this.comment = comment;
+        this.member = member;
+    }
 }
