@@ -47,6 +47,8 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    //삭제 및 수정은 작성자만 가능하게 권한 부여 필요
+
     // 댓글 수정
     @Transactional
     public CommentDto updateComment(Long commentId, CommentRequestDto requestDto) {

@@ -4,6 +4,7 @@ import cultureinfo.culture_app.domain.Article;
 import cultureinfo.culture_app.domain.Content;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
+import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.repository.ArticleRepository;
@@ -69,9 +70,12 @@ public class ArticleService {
                 .map(ArticleSummaryDto::from)
                 .toList();
     }
+
+    //삭제 및 수정은 작성자만 가능하게 권한 부여 필요
+
     // 수정
     @Transactional
-    public ArticleDto updateArticle(Long id, ArticleRequestDto request) {
+    public ArticleDto updateArticle(Long id, ArticleUpdateDto request) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         article.update(request.getTitle(), request.getBody(), request.getCategory());
