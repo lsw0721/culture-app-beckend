@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CommentDto {
     private Long id;
-    private String content;
+    private String commentContent; // 댓글 내용
     private Long memberId;
     private String memberName;
     private LocalDateTime createdDate;
@@ -19,7 +19,7 @@ public class CommentDto {
     public static CommentDto from(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
-                .content(comment.getCommentContent())
+                .commentContent(comment.getCommentContent())
                 .memberId(comment.getMember().getId())
                 .memberName(comment.getMember().getNickname())
                 .createdDate(comment.getCreateDate())
