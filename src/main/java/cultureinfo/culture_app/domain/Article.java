@@ -3,6 +3,8 @@ package cultureinfo.culture_app.domain;
 import cultureinfo.culture_app.domain.type.ArticleCategory;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +36,14 @@ public class Article extends BaseEntity {
     private Content content;
 
     @Builder
-    public Article(String title, String body, ArticleCategory category, Member member, Content content) {
+    public Article(String title, String body, ArticleCategory category, Member member, Content content, LocalDateTime createDate, String createBy) {
         this.title = title;
         this.body = body;
         this.category = category;
         this.member = member;
         this.content = content;
+        this.createDate = createDate;
+        this.createBy = createBy;
     }
 
     //게시글 수정

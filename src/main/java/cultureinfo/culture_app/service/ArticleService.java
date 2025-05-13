@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class ArticleService {
                 .category(request.getCategory())
                 .member(member)
                 .content(content)
+                .createBy(member.getMemberId())
+                .createDate(LocalDateTime.now())
                 .build();
 
         return ArticleDto.from(articleRepository.save(article));
@@ -79,6 +82,8 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         article.update(request.getTitle(), request.getBody(), request.getCategory());
+        article.setLastModifiedBy(article.getMember().getMemberId());
+        article.setLastModifiedDate(LocalDateTime.now());
 
         return ArticleDto.from(article);
     }
