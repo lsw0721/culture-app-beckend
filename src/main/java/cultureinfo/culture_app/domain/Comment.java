@@ -34,10 +34,12 @@ public class Comment extends BaseEntity {
     private final List<CommentLike> comments = new ArrayList<>();
 
     @Builder
-    public Comment(String commentContent, Article article, Member member) {
+    public Comment(String commentContent, Article article, Member member, LocalDateTime createDate, String createBy) {
         this.commentContent = commentContent;
         this.article = article;
         this.member = member;
+        this.createDate = createDate;
+        this.createBy = createBy;
     }
 
     //댓글 수정

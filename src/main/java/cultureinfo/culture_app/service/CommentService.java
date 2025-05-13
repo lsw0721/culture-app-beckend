@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,13 @@ public class CommentService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
-        Comment comment = new Comment(requestDto.getCommentContent(), article, member);
+        Comment comment = Comment.builder()
+                .commentContent(requestDto.getCommentContent())
+                .member(member)
+                .article(article)
+                .createBy(member.getMemberId())
+                .createDate(LocalDateTime.now())
+                .build();
         Comment saved = commentRepository.save(comment);
         article.increaseCommentCount();
         return CommentDto.from(saved);
@@ -55,6 +62,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         comment.updateContent(requestDto.getCommentContent());
+        comment.setLastModifiedBy(comment.getMember().getMemberId());
+        comment.setLastModifiedDate(LocalDateTime.now());
         return CommentDto.from(comment);
     }
 
