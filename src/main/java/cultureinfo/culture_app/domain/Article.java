@@ -12,15 +12,12 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Article {
+public class Article extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 
     private String title; // 게시글 제목
     private String body; // 게시글 내용
-
-    @CreationTimestamp
-    private LocalDateTime createDateTime; // 게시글 생성 시간
 
     private  Long likeCount = 0L; // 좋아요 개수 처리
     private  Long commentCount = 0L; // 댓글 개수 처리
@@ -35,12 +32,17 @@ public class Article {
     @OneToMany(mappedBy = "article")
     private final List<ArticleLike> articleLikes = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "content_id")
+    private Content content;
+
     @Builder
-    public Article(String title, String body, ArticleCategory category, Member member) {
+    public Article(String title, String body, ArticleCategory category, Member member, Content content) {
         this.title = title;
         this.body = body;
         this.category = category;
         this.member = member;
+        this.content = content;
     }
 
     //게시글 수정
