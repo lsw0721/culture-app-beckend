@@ -22,7 +22,7 @@ public class CommentDto {
                 .content(comment.getCommentContent())
                 .memberId(comment.getMember().getId())
                 .memberName(comment.getMember().getNickname())
-                .createdDate(comment.getCreateDateTime())
+                .createdDate(comment.getCreateDate())
                 .likeCount(comment.getLikeCount())
                 .build();
     }
