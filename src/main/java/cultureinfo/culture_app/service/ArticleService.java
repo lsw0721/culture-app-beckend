@@ -34,22 +34,19 @@ public class ArticleService {
                 .member(member)
                 .build();
 
-        Article saved = articleRepository.save(article);
-
-        return convertToDto(saved);
+        return ArticleDto.from(articleRepository.save(article));
     }
 
     // 단건 조회
     public ArticleDto getArticle(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
-        return convertToDto(article);
+        return ArticleDto.from(articleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다.")));
     }
 
     // 전체 조회
     public List<ArticleDto> getAllArticles() {
         return articleRepository.findAll().stream()
-                .map(this::convertToDto)
+                .map(ArticleDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -58,10 +55,9 @@ public class ArticleService {
     public ArticleDto updateArticle(Long id, ArticleRequestDto request) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
-
         article.update(request.getTitle(), request.getBody(), request.getCategory());
 
-        return convertToDto(article);
+        return ArticleDto.from(article);
     }
 
     // 삭제
@@ -71,18 +67,4 @@ public class ArticleService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         articleRepository.delete(article);
     }
-
-    // Entity → DTO 변환
-    private ArticleDto convertToDto(Article article) {
-        return ArticleDto.builder()
-                .id(article.getId())
-                .title(article.getTitle())
-                .body(article.getBody())
-                .category(article.getCategory())
-                .createDateTime(article.getCreateDateTime())
-                .likeCount(article.getLikeCount())
-                .commentCount(article.getCommentCount())
-                .build();
-    }
-
 }
