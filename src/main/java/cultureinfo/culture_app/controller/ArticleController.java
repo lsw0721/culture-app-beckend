@@ -1,6 +1,7 @@
 package cultureinfo.culture_app.controller;
 
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
+import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.service.ArticleService;
@@ -54,7 +55,7 @@ public class ArticleController {
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDto> updateArticle(
             @PathVariable Long id,
-            @RequestBody ArticleRequestDto requestDto) {
+            @RequestBody ArticleUpdateDto requestDto) {
         ArticleDto updated = articleService.updateArticle(id, requestDto);
         return ResponseEntity.ok(updated);
     }
