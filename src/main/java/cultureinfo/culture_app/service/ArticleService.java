@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +45,12 @@ public class ArticleService {
 
     // 전체 조회
     public List<ArticleDto> getAllArticles() {
-        return articleRepository.findAll().stream()
-                .map(ArticleDto::from)
-                .collect(Collectors.toList());
+        List<Article> articles = articleRepository.findAll();
+        List<ArticleDto> result = new ArrayList<>();
+        for (Article article : articles) {
+            result.add(ArticleDto.from(article));
+        }
+        return result;
     }
 
     // 수정
