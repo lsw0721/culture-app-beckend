@@ -1,5 +1,6 @@
 package cultureinfo.culture_app.dto.response;
 
+import cultureinfo.culture_app.domain.Article;
 import cultureinfo.culture_app.domain.type.ArticleCategory;
 import lombok.*;
 
@@ -18,4 +19,16 @@ public class ArticleDto {
     private LocalDateTime createDateTime;
     private Long likeCount;
     private Long commentCount;
+
+    public static ArticleDto from(Article article) {
+        return ArticleDto.builder()
+                .id(article.getId())
+                .title(article.getTitle())
+                .body(article.getBody())
+                .category(article.getCategory())
+                .createDateTime(article.getCreateDateTime())
+                .likeCount(article.getLikeCount())
+                .commentCount(article.getCommentCount())
+                .build();
+    }
 }
