@@ -3,9 +3,6 @@ package cultureinfo.culture_app.domain;
 import cultureinfo.culture_app.domain.type.ArticleCategory;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

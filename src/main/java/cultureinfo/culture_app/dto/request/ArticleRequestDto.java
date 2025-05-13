@@ -7,8 +7,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class ArticleRequestDto {
     private String title;
     private String body;
     private ArticleCategory category;
+    private Long contentId;
 }
