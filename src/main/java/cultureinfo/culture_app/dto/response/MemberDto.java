@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class MemberDto {
     private final Long id;
-    private final String memberId;
+    private final String username;
     private final String name;
     private final String email;
     private final String location;
@@ -18,7 +18,7 @@ public class MemberDto {
     public static MemberDto from(Member member) {
         return MemberDto.builder()
                 .id(member.getId())
-                .memberId(member.getMemberId())
+                .username(member.getUsername())
                 .name(member.getName())
                 .email(member.getEmail())
                 .location(member.getLocation())

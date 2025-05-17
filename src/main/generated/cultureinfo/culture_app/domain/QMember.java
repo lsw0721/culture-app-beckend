@@ -32,15 +32,23 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath location = createString("location");
+    public final EnumPath<cultureinfo.culture_app.domain.type.Keyword1> keyword1 = createEnum("keyword1", cultureinfo.culture_app.domain.type.Keyword1.class);
 
-    public final StringPath memberId = createString("memberId");
+    public final EnumPath<cultureinfo.culture_app.domain.type.Keyword2> keyword2 = createEnum("keyword2", cultureinfo.culture_app.domain.type.Keyword2.class);
+
+    public final EnumPath<cultureinfo.culture_app.domain.type.Keyword3> keyword3 = createEnum("keyword3", cultureinfo.culture_app.domain.type.Keyword3.class);
+
+    public final StringPath location = createString("location");
 
     public final StringPath name = createString("name");
 
     public final StringPath nickname = createString("nickname");
 
     public final StringPath password = createString("password");
+
+    public final SetPath<cultureinfo.culture_app.domain.type.Role, EnumPath<cultureinfo.culture_app.domain.type.Role>> roles = this.<cultureinfo.culture_app.domain.type.Role, EnumPath<cultureinfo.culture_app.domain.type.Role>>createSet("roles", cultureinfo.culture_app.domain.type.Role.class, EnumPath.class, PathInits.DIRECT2);
+
+    public final StringPath username = createString("username");
 
     public QMember(String variable) {
         super(Member.class, forVariable(variable));

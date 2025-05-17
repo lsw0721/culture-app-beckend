@@ -22,15 +22,27 @@ public class QComment extends EntityPathBase<Comment> {
 
     public static final QComment comment = new QComment("comment");
 
+    public final QBaseEntity _super = new QBaseEntity(this);
+
     public final QArticle article;
 
     public final StringPath commentContent = createString("commentContent");
 
     public final ListPath<CommentLike, QCommentLike> comments = this.<CommentLike, QCommentLike>createList("comments", CommentLike.class, QCommentLike.class, PathInits.DIRECT2);
 
-    public final DateTimePath<java.time.LocalDateTime> createDateTime = createDateTime("createDateTime", java.time.LocalDateTime.class);
+    //inherited
+    public final StringPath createBy = _super.createBy;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createDate = _super.createDate;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    //inherited
+    public final StringPath lastModifiedBy = _super.lastModifiedBy;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = _super.lastModifiedDate;
 
     public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
 
