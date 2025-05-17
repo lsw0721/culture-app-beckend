@@ -49,4 +49,12 @@ public class Member {
         this.gender = gender;
         this.nickname = nickname;
     }
+
+    public void update(String name, String nickname, String location) {
+        this.name = name;
+        this.nickname = nickname;
+        this.location = location;
+    }
+
+
 }
