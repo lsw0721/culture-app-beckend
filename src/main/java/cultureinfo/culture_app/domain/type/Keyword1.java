@@ -1,5 +1,6 @@
 package cultureinfo.culture_app.domain.type;
 
-public enum keyword1 {
+public enum Keyword1 {
     //거리 기반?
+    SEOUL
 }

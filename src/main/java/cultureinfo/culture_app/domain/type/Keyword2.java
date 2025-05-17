@@ -1,5 +1,6 @@
 package cultureinfo.culture_app.domain.type;
 
-public enum keyword2 {
+public enum Keyword2 {
     //컨텐츠 기반
+    SPORT
 }

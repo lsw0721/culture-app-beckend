@@ -1,5 +1,7 @@
 package cultureinfo.culture_app.domain.type;
 
-public enum keyword3 {
+public enum Keyword3 {
     //??
+    HI
 }
+
