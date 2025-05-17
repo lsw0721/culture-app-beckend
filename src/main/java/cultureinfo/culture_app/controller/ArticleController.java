@@ -45,7 +45,6 @@ public class ArticleController {
                 .status(HttpStatus.CREATED)
                 .body(created);
     }
-
     // 게시글 단건 조회
     @GetMapping("/{id}")
     public ResponseEntity<ArticleDto> getArticle(@PathVariable Long id) {
