@@ -85,6 +85,7 @@ public class MemberService {
     }
 
     //단건 조회
+
     public MemberDto getMemberById(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
@@ -186,8 +187,4 @@ public class MemberService {
         member.changePassword(newPassword);
     }
 
-
-
-
 }
-

@@ -1,5 +1,6 @@
 package cultureinfo.culture_app.controller;
 
+
 import cultureinfo.culture_app.dto.request.*;
 import cultureinfo.culture_app.dto.response.MemberDto;
 import cultureinfo.culture_app.dto.security.JwtToken;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+
 @RequestMapping("/api/members")
 public class
 MemberController {
@@ -114,5 +116,6 @@ MemberController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .build();
         }
+
     }
 }
