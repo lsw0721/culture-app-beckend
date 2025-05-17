@@ -22,12 +22,4 @@ public class SecurityUtil {
                 .orElseThrow(() -> new IllegalArgumentException("해당 아이디를를 가진 유저가 없습니다."));
         return user.getId();
     }
-
-    public String getCurrentUsername(){
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication.getName() == null) {
-            throw new RuntimeException("No authentication information.");
-        }
-        return authentication.getName();
-    }
 }
