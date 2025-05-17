@@ -3,7 +3,6 @@ package cultureinfo.culture_app.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-//중복 처리 필요//
 @Entity
 @Getter
 @Setter

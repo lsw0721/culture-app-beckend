@@ -14,14 +14,11 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment {
+public class Comment extends BaseEntity {
     @Id @GeneratedValue
     private Long id;
 
     private String commentContent; // 댓글 내용
-
-    @CreationTimestamp
-    private LocalDateTime createDateTime; // 생성 일자
 
     private Long likeCount = 0L; // 좋아요 카운트
 
@@ -37,10 +34,12 @@ public class Comment {
     private final List<CommentLike> comments = new ArrayList<>();
 
     @Builder
-    public Comment(String commentContent, Article article, Member member) {
+    public Comment(String commentContent, Article article, Member member, LocalDateTime createDate, String createBy) {
         this.commentContent = commentContent;
         this.article = article;
         this.member = member;
+        this.createDate = createDate;
+        this.createBy = createBy;
     }
 
     //댓글 수정

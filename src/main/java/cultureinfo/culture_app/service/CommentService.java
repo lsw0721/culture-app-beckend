@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,13 @@ public class CommentService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
 
-        Comment comment = new Comment(requestDto.getCommentContent(), article, member);
+        Comment comment = Comment.builder()
+                .commentContent(requestDto.getCommentContent())
+                .member(member)
+                .article(article)
+                .createBy(member.getUsername())
+                .createDate(LocalDateTime.now())
+                .build();
         Comment saved = commentRepository.save(comment);
         article.increaseCommentCount();
         return CommentDto.from(saved);
@@ -47,12 +54,16 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    //삭제 및 수정은 작성자만 가능하게 권한 부여 필요
+
     // 댓글 수정
     @Transactional
     public CommentDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         comment.updateContent(requestDto.getCommentContent());
+        comment.setLastModifiedBy(comment.getMember().getUsername());
+        comment.setLastModifiedDate(LocalDateTime.now());
         return CommentDto.from(comment);
     }
 

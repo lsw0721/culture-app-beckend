@@ -1,7 +1,9 @@
 package cultureinfo.culture_app.controller;
 
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
+import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
+import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,11 +43,19 @@ public class ArticleController {
         return ResponseEntity.ok(articles);
     }
 
+    //게시글 검색
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleSummaryDto>> searchArticles(@RequestParam String keyword){
+        List<ArticleSummaryDto> articles = articleService.searchArticles(keyword);
+        return ResponseEntity.ok(articles);
+    }
+
+
     // 게시글 수정
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDto> updateArticle(
             @PathVariable Long id,
-            @RequestBody ArticleRequestDto requestDto) {
+            @RequestBody ArticleUpdateDto requestDto) {
         ArticleDto updated = articleService.updateArticle(id, requestDto);
         return ResponseEntity.ok(updated);
     }

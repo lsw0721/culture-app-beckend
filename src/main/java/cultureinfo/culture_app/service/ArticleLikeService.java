@@ -29,6 +29,7 @@ public class ArticleLikeService {
 
         boolean liked;
 
+
         if (articleLikeRepository.existsByArticleIdAndMemberId(articleId, memberId)) {
             ArticleLike existing = articleLikeRepository
                     .findByArticleIdAndMemberId(articleId, memberId)

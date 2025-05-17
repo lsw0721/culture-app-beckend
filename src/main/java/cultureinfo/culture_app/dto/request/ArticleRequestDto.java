@@ -7,8 +7,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
+//게시글 작성 dto
 public class ArticleRequestDto {
     private String title;
     private String body;
     private ArticleCategory category;
+    private Long contentId;
 }
