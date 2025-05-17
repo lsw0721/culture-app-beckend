@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustom {
+    Optional<Article> findById(Long id);
 }
