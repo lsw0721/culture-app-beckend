@@ -40,7 +40,7 @@ public class ArticleService {
                 .category(request.getCategory())
                 .member(member)
                 .content(content)
-                .createBy(member.getMemberId())
+                .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
 
@@ -82,7 +82,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         article.update(request.getTitle(), request.getBody(), request.getCategory());
-        article.setLastModifiedBy(article.getMember().getMemberId());
+        article.setLastModifiedBy(article.getMember().getUsername());
         article.setLastModifiedDate(LocalDateTime.now());
 
         return ArticleDto.from(article);

@@ -37,7 +37,7 @@ public class CommentService {
                 .commentContent(requestDto.getCommentContent())
                 .member(member)
                 .article(article)
-                .createBy(member.getMemberId())
+                .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
         Comment saved = commentRepository.save(comment);
@@ -62,7 +62,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         comment.updateContent(requestDto.getCommentContent());
-        comment.setLastModifiedBy(comment.getMember().getMemberId());
+        comment.setLastModifiedBy(comment.getMember().getUsername());
         comment.setLastModifiedDate(LocalDateTime.now());
         return CommentDto.from(comment);
     }
