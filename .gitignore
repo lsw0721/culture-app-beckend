@@ -54,3 +54,7 @@ out/
 
 # === 기타 ===
 HELP.md
+
+#macos system file
+.Ds_Store
+**/.Ds_Store
