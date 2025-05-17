@@ -3,10 +3,7 @@ package cultureinfo.culture_app.domain;
 import cultureinfo.culture_app.domain.type.*;
 import jakarta.persistence.*;
 import lombok.*;
-
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Entity

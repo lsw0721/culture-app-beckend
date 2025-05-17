@@ -4,7 +4,6 @@ package cultureinfo.culture_app.dto.request;
 import cultureinfo.culture_app.domain.type.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
