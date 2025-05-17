@@ -10,8 +10,10 @@ import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.repository.ArticleRepository;
 import cultureinfo.culture_app.repository.ContentRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
+import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +28,15 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
     private final ContentRepository contentRepository;
+    private final SecurityUtil securityUtil;
 
-    //게시글 작성
+    //게시글 작성: 로그인한 사용자만 가능
     @Transactional
-    public ArticleDto createArticle(ArticleRequestDto request, Long memberId) {
+    public ArticleDto createArticle(ArticleRequestDto request) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
         Content content = contentRepository.findById(request.getContentId())
@@ -74,13 +81,25 @@ public class ArticleService {
                 .toList();
     }
 
-    //삭제 및 수정은 작성자만 가능하게 권한 부여 필요
-
-    // 수정
+    // 수정: 작성자 또는 ADMIN만 가능
     @Transactional
-    public ArticleDto updateArticle(Long id, ArticleUpdateDto request) {
-        Article article = articleRepository.findById(id)
+    public ArticleDto updateArticle(Long articleId, ArticleUpdateDto request) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
+        Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        boolean isOwner = article.getMember().getId().equals(memberId);
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("글 수정 권한이 없습니다.");
+        }
+
         article.update(request.getTitle(), request.getBody(), request.getCategory());
         article.setLastModifiedBy(article.getMember().getUsername());
         article.setLastModifiedDate(LocalDateTime.now());
@@ -88,11 +107,26 @@ public class ArticleService {
         return ArticleDto.from(article);
     }
 
-    // 삭제
+    // 삭제: 작성자 또는 ADMIN만 가능
     @Transactional
-    public void deleteArticle(Long id) {
-        Article article = articleRepository.findById(id)
+    public void deleteArticle(Long articleId) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
+
+        Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        boolean isOwner = article.getMember().getId().equals(memberId);
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("글 삭제 권한이 없습니다.");
+        }
         articleRepository.delete(article);
     }
 }

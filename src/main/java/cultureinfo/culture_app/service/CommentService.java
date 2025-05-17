@@ -9,8 +9,10 @@ import cultureinfo.culture_app.repository.ArticleRepository;
 import cultureinfo.culture_app.repository.CommentRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 
+import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +26,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final ArticleRepository articleRepository;
+    private final SecurityUtil securityUtil;
 
-    // 댓글 등록
+    // 댓글 등록: 로그인한 사용자만 가능
     @Transactional
-    public CommentDto createComment(Long articleId, Long memberId, CommentRequestDto requestDto) {
+    public CommentDto createComment(Long articleId, CommentRequestDto requestDto) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
         Article article = articleRepository.findById(articleId)
@@ -56,11 +63,25 @@ public class CommentService {
 
     //삭제 및 수정은 작성자만 가능하게 권한 부여 필요
 
-    // 댓글 수정
+    // 댓글 수정: 
     @Transactional
     public CommentDto updateComment(Long commentId, CommentRequestDto requestDto) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        boolean isOwner = comment.getMember().getId().equals(memberId);
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
+        }
+        
         comment.updateContent(requestDto.getCommentContent());
         comment.setLastModifiedBy(comment.getMember().getUsername());
         comment.setLastModifiedDate(LocalDateTime.now());
@@ -70,8 +91,21 @@ public class CommentService {
     // 댓글 삭제
     @Transactional
     public void deleteComment(Long commentId) {
+        Long memberId = securityUtil.getCurrentId();
+        if (memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다.");
+        }
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+
+        boolean isOwner = comment.getMember().getId().equals(memberId);
+        boolean isAdmin = member.getRoles().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
+        if (!isOwner && !isAdmin) {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
         commentRepository.delete(comment);
         comment.getArticle().decreaseCommentCount();
     }
