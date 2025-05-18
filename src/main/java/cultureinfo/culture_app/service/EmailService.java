@@ -8,6 +8,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import cultureinfo.culture_app.dto.request.InquiryRequestDto;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,6 +116,29 @@ public class EmailService {
         return message;
     }
 
+    // 문의용 이메일 작성
+    public MimeMessage createInquiryMail(String recipientEmail, String title, String inquiry_body, String member_email) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        try {
+            message.setFrom(senderEmail);
+            message.setRecipients(MimeMessage.RecipientType.TO, recipientEmail);
+            message.setSubject("문의: " + title);
+
+            // 이메일 본문
+            String body = "<h1 style='color:#2c2f33;'>안녕하세요.</h1>"
+                    + "<h3 style='color:#99aab5;'>사용자가 보낸 문의 내용입니다.</h3>"
+                    + "<h2 style='color:#2c2f33;'>"+inquiry_body+"</h2>"
+                    + "<h2 style='color:#2c2f33;'>사용자 메일:"+ member_email+"</h2>";
+
+            message.setText(body, "UTF-8", "html");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return message;
+    }
+    
     // 회원가입 이메일 전송 및 Redis 저장
     public void sendJoinEmail(String recipientEmail) {
         int authCode = createNumber();
@@ -148,5 +173,15 @@ public class EmailService {
         String storedCode = valueOperations.get(email);
 
         return storedCode != null && storedCode.equals(inputCode);
+    }
+
+    //문의용 메일 전송 
+    public void sendInquiry(InquiryRequestDto request){
+        String member_email = memberService.getEmailbyId();
+        String title = request.getTitle();
+        String body = request.getBody();
+        MimeMessage message = createInquiryMail(senderEmail, title, body,member_email);
+        javaMailSender.send(message);
+
     }
 }
