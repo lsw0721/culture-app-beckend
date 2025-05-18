@@ -129,4 +129,16 @@ public class ArticleService {
         }
         articleRepository.delete(article);
     }
+
+    @Transactional(readOnly = true)
+    // 내 게시글만 확인
+    public List<ArticleDto> getMyArticles() {
+        Long memberId = securityUtil.getCurrentId();
+        List<Article> articles = articleRepository.findAllByMember_id(memberId);
+        List<ArticleDto> result = new ArrayList<>();
+        for (Article article : articles) {
+            result.add(ArticleDto.from(article));
+        }
+        return result;
+    }
 }
