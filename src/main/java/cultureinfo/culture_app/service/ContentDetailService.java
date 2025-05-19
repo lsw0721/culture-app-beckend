@@ -7,6 +7,7 @@ import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class ContentDetailService {
 
     @Transactional(readOnly = true)
     //페이지 단위 콘텐츠 리스트 조회(필터, 검색, 정렬, 페이징, 찜 여부 포함)
-    public Page<ContentDetailDto> getContentDetails(
+    public Slice<ContentDetailDto> getContentDetails(
             Long categoryId,
             String keyword,
             String sortBy,
@@ -34,6 +35,7 @@ public class ContentDetailService {
                 categoryId, keyword, sortBy, pageable, memberId
         );
     }
+
     //단일 콘텐츠 상세 조회
     @Transactional(readOnly = true)
     public ContentDetailDto getContentDetail(Long contentDetailId) {

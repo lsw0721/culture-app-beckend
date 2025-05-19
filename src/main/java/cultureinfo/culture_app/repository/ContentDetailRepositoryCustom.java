@@ -4,9 +4,10 @@ import cultureinfo.culture_app.dto.response.ContentDetailDto;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface ContentDetailRepositoryCustom {
-    Page<ContentDetailDto> searchContentDetails(
+    Slice<ContentDetailDto> searchContentDetails(
             Long categoryId, String keyword, String sortBy, Pageable pageable, Long memberId
     );
 }

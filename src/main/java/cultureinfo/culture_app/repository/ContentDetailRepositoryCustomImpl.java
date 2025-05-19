@@ -1,20 +1,19 @@
 package cultureinfo.culture_app.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.QContentDetail;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -23,7 +22,7 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
     private final ContentFavoriteRepository contentFavoriteRepository;
 
     @Override
-    public Page<ContentDetailDto> searchContentDetails(
+    public Slice<ContentDetailDto> searchContentDetails(
             Long categoryId, String keyword, String sortBy, Pageable pageable,
             Long memberId ) {
         QContentDetail contentDetail = QContentDetail.contentDetail;
@@ -56,22 +55,20 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
             default -> contentDetail.startDateTime.desc(); // 시작일수 내림차순(최근 것 부터)
         };
 
-        //데이터 조회(페이징)
+        //데이터 조회(size+1개로 hasNext 판단)
+        int size = pageable.getPageSize();
         List<ContentDetail> contents = queryFactory
                 .selectFrom(contentDetail)
                 .where(builder)
                 .orderBy(orderSpecifier)
                 .offset(pageable.getOffset()) // 현재 페이지 시작 위치
-                .limit(pageable.getPageSize()) // 한 페이지당 몇 개
+                .limit(size + 1) // 한 페이지당 몇 개
                 .fetch();
 
-        //전체 개수 조회
-        long total = Optional.ofNullable(queryFactory
-                .select(contentDetail.count())
-                .from(contentDetail)
-                .where(builder)
-                .fetchOne()
-        ).orElse(0L);
+        boolean hasNext = contents.size() > size;
+        if (hasNext) {
+            contents.remove(size);
+        }
 
         //찜 여부 처리
         Set<Long> favoriteIds = new HashSet<>();
@@ -86,10 +83,10 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
 
         //dto 변환 및 찜 여부 포함
         List<ContentDetailDto> result = contents.stream()
-                .map(cd -> ContentDetailDto.from(cd, favoriteIds.contains(cd.getId())))
+                .map(c -> ContentDetailDto.from(c, favoriteIds.contains(c.getId())))
                 .toList();
 
-        return new PageImpl<>(result, pageable, total);
+        return new SliceImpl<>(result, pageable, hasNext);
     }
 
 }
