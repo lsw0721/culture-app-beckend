@@ -11,26 +11,28 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QContent is a Querydsl query type for Content
+ * QContentDetail is a Querydsl query type for ContentDetail
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QContent extends EntityPathBase<Content> {
+public class QContentDetail extends EntityPathBase<ContentDetail> {
 
-    private static final long serialVersionUID = -18038625L;
+    private static final long serialVersionUID = 522883536L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QContent content = new QContent("content");
+    public static final QContentDetail contentDetail = new QContentDetail("contentDetail");
 
-    public final ListPath<ContentFavorite, QContentFavorite> contentFavorites = this.<ContentFavorite, QContentFavorite>createList("contentFavorites", ContentFavorite.class, QContentFavorite.class, PathInits.DIRECT2);
+    public final ListPath<ContentFavorite, QContentFavorite> contentFavorite = this.<ContentFavorite, QContentFavorite>createList("contentFavorite", ContentFavorite.class, QContentFavorite.class, PathInits.DIRECT2);
 
     public final StringPath contentName = createString("contentName");
 
-    public final QContentSubcategory contentSubCategory;
+    public final QContentSmallCategory contentSmallCategory;
 
     public final StringPath details = createString("details");
 
     public final DateTimePath<java.time.LocalDateTime> endDateTime = createDateTime("endDateTime", java.time.LocalDateTime.class);
+
+    public final NumberPath<Long> favoriteCount = createNumber("favoriteCount", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -42,25 +44,25 @@ public class QContent extends EntityPathBase<Content> {
 
     public final DateTimePath<java.time.LocalDateTime> startDateTime = createDateTime("startDateTime", java.time.LocalDateTime.class);
 
-    public QContent(String variable) {
-        this(Content.class, forVariable(variable), INITS);
+    public QContentDetail(String variable) {
+        this(ContentDetail.class, forVariable(variable), INITS);
     }
 
-    public QContent(Path<? extends Content> path) {
+    public QContentDetail(Path<? extends ContentDetail> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QContent(PathMetadata metadata) {
+    public QContentDetail(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QContent(PathMetadata metadata, PathInits inits) {
-        this(Content.class, metadata, inits);
+    public QContentDetail(PathMetadata metadata, PathInits inits) {
+        this(ContentDetail.class, metadata, inits);
     }
 
-    public QContent(Class<? extends Content> type, PathMetadata metadata, PathInits inits) {
+    public QContentDetail(Class<? extends ContentDetail> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.contentSubCategory = inits.isInitialized("contentSubCategory") ? new QContentSubcategory(forProperty("contentSubCategory"), inits.get("contentSubCategory")) : null;
+        this.contentSmallCategory = inits.isInitialized("contentSmallCategory") ? new QContentSmallCategory(forProperty("contentSmallCategory"), inits.get("contentSmallCategory")) : null;
     }
 
 }

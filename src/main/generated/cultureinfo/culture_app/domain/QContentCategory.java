@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -22,6 +23,8 @@ public class QContentCategory extends EntityPathBase<ContentCategory> {
     public final StringPath contentCategoryName = createString("contentCategoryName");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final ListPath<ContentSubcategory, QContentSubcategory> subcategories = this.<ContentSubcategory, QContentSubcategory>createList("subcategories", ContentSubcategory.class, QContentSubcategory.class, PathInits.DIRECT2);
 
     public QContentCategory(String variable) {
         super(ContentCategory.class, forVariable(variable));

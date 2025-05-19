@@ -1,14 +1,14 @@
 package cultureinfo.culture_app.service;
 
 import cultureinfo.culture_app.domain.Article;
-import cultureinfo.culture_app.domain.Content;
+import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
 import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.repository.ArticleRepository;
-import cultureinfo.culture_app.repository.ContentRepository;
+import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,7 +27,7 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
-    private final ContentRepository contentRepository;
+    private final ContentDetailRepository contentDetailRepository;
     private final SecurityUtil securityUtil;
 
     //게시글 작성: 로그인한 사용자만 가능
@@ -39,14 +39,14 @@ public class ArticleService {
         }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
-        Content content = contentRepository.findById(request.getContentId())
+        ContentDetail contentDetail = contentDetailRepository.findById(request.getContentId())
                 .orElseThrow(() -> new EntityNotFoundException("콘텐츠가 존재하지 않습니다."));
         Article article = Article.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
                 .category(request.getCategory())
                 .member(member)
-                .content(content)
+                .contentDetail(contentDetail)
                 .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
@@ -80,6 +80,8 @@ public class ArticleService {
                 .map(ArticleSummaryDto::from)
                 .toList();
     }
+
+
 
     // 수정: 작성자 또는 ADMIN만 가능
     @Transactional

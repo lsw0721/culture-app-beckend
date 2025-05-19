@@ -24,7 +24,7 @@ public class QLog extends EntityPathBase<Log> {
 
     public final StringPath action = createString("action");
 
-    public final QContent content;
+    public final QContentDetail content;
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
@@ -50,7 +50,7 @@ public class QLog extends EntityPathBase<Log> {
 
     public QLog(Class<? extends Log> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.content = inits.isInitialized("content") ? new QContent(forProperty("content"), inits.get("content")) : null;
+        this.content = inits.isInitialized("content") ? new QContentDetail(forProperty("content"), inits.get("content")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 

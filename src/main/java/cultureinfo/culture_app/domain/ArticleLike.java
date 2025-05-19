@@ -9,7 +9,7 @@ import lombok.*;
 @Table(name = "article_like", uniqueConstraints = @UniqueConstraint(columnNames = {"article_id", "member_id"}))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArticleLike {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
