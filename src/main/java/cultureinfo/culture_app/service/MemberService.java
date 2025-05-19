@@ -187,4 +187,13 @@ public class MemberService {
         member.changePassword(newPassword);
     }
 
+    //id로 이메일 가져오기
+    @Transactional
+    public String getEmailbyId() {
+        Long userId = securityUtil.getCurrentId();
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+        return member.getEmail();
+    }
+
 }
