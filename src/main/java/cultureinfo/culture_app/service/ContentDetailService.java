@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ContentDetailService {
     private final ContentDetailRepository contentDetailRepository;
     private final SecurityUtil securityUtil;
-    private final ContentFavoriteRepository contentFavoriteRepository;
     private final ContentFavoriteService contentFavoriteService;
 
     @Transactional(readOnly = true)
