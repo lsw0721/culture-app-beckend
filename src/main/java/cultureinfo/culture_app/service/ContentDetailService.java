@@ -29,7 +29,10 @@ public class ContentDetailService {
             String sortBy,
             Pageable pageable
     ){
-        Long memberId = getMemberIdOrNull();
+        Long memberId = securityUtil.getCurrentId();
+        if(memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다");
+        }
         return contentDetailRepository.searchContentDetails(
                 categoryId, keyword, sortBy, pageable, memberId
         );
@@ -37,32 +40,17 @@ public class ContentDetailService {
     //단일 콘텐츠 상세 조회
     @Transactional(readOnly = true)
     public ContentDetailDto getContentDetail(Long contentDetailId) {
-        Long memberId = getMemberIdOrNull();
+        Long memberId = securityUtil.getCurrentId();
+        if(memberId == null) {
+            throw new AccessDeniedException("로그인이 필요합니다");
+        }
+
         ContentDetail contentDetail = contentDetailRepository.findById(contentDetailId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
         boolean isFavorited = (memberId != null)
                 && contentFavoriteService.isFavorite(contentDetailId);
         return ContentDetailDto.from(contentDetail, isFavorited);
 
-    }
-
-    //찜 토글 후 최신 상태의 dto 리턴
-    public ContentFavoriteDto toggleFavorite(Long contentDetailId) {
-        Long memberId = getMemberIdOrNull();
-        if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
-        }
-        //토글 로직 수행(true = 찜, false = 찜 해제)
-        return contentFavoriteService.toggleFavorite(contentDetailId);
-    }
-
-    /** 로그인 사용자 ID 반환, 인증 정보 없으면 null */
-    private Long getMemberIdOrNull() {
-        try {
-            return securityUtil.getCurrentId();
-        } catch (RuntimeException e) {
-            return null;
-        }
     }
 
 }
