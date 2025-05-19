@@ -53,7 +53,7 @@ public class AnnouncementService {
                 .body(request.getBody())
                 .category(ArticleCategory.NOTICE)
                 .member(member)
-                .content(null)
+                .contentDetail(null)
                 .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
