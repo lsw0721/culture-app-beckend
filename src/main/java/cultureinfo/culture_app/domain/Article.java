@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Article extends BaseEntity {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title; // 게시글 제목
@@ -33,15 +33,15 @@ public class Article extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
-    private Content content;
+    private ContentDetail contentDetail;
 
     @Builder
-    public Article(String title, String body, ArticleCategory category, Member member, Content content, LocalDateTime createDate, String createBy) {
+    public Article(String title, String body, ArticleCategory category, Member member, ContentDetail contentDetail, LocalDateTime createDate, String createBy) {
         this.title = title;
         this.body = body;
         this.category = category;
         this.member = member;
-        this.content = content;
+        this.contentDetail = contentDetail;
         this.createDate = createDate;
         this.createBy = createBy;
     }
