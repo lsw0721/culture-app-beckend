@@ -7,7 +7,6 @@ import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.QContentDetail;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;

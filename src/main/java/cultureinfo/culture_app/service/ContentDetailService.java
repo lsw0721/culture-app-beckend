@@ -5,7 +5,6 @@ import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
@@ -46,8 +45,7 @@ public class ContentDetailService {
 
         ContentDetail contentDetail = contentDetailRepository.findById(contentDetailId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
-        boolean isFavorited = (memberId != null)
-                && contentFavoriteService.isFavorite(contentDetailId);
+        boolean isFavorited = contentFavoriteService.isFavorite(memberId,contentDetailId);
         return ContentDetailDto.from(contentDetail, isFavorited);
 
     }

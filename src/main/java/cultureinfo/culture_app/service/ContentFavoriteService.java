@@ -60,11 +60,7 @@ public class ContentFavoriteService {
 
     //특정 콘텐츠에 대해 로그인 사용자가 찜했는지 여부만 조회
     @Transactional(readOnly = true)
-    public boolean isFavorite(Long contentDetailId){
-        Long memberId = securityUtil.getCurrentId();
-        if(memberId == null) {
-            return false;
-        }
+    public boolean isFavorite(Long memberId,Long contentDetailId){
         return contentFavoriteRepository.existsByMemberIdAndContentDetailId(memberId, contentDetailId);
     }
 }
