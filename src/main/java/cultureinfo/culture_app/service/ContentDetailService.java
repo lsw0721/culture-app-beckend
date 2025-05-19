@@ -2,9 +2,7 @@ package cultureinfo.culture_app.service;
 
 import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
-import cultureinfo.culture_app.dto.response.ContentFavoriteDto;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
-import cultureinfo.culture_app.repository.ContentFavoriteRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
