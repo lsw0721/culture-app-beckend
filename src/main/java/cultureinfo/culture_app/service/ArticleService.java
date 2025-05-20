@@ -13,6 +13,8 @@ import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,22 +65,19 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     // 전체 조회
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        List<ArticleDto> result = new ArrayList<>();
-        for (Article article : articles) {
-            result.add(ArticleDto.from(article));
-        }
-        return result;
+    public Slice<ArticleSummaryDto> getAllArticles(Pageable pageable) {
+        // Slice<Article>을 리포지토리에서 받아오고
+        Slice<Article> slice = articleRepository.findAllBy(pageable);
+        // DTO 로 매핑한 Slice 반환
+        return slice.map(ArticleSummaryDto::from);
     }
 
     //검색(제목 or 본문의 일부 내용 입력 시 검색 가능)
     @Transactional(readOnly = true)
-    public List<ArticleSummaryDto> searchArticles(String keyword) {
-        List<Article> articles = articleRepository.searchByKeyword(keyword);
-        return articles.stream()
-                .map(ArticleSummaryDto::from)
-                .toList();
+    public Slice<ArticleSummaryDto> searchArticles(String keyword, Pageable pageable) {
+        Slice<Article> slice = articleRepository.searchByKeyword(keyword, pageable);
+        // DTO로 매핑한 Slice 반환
+        return slice.map(ArticleSummaryDto::from);
     }
 
 
