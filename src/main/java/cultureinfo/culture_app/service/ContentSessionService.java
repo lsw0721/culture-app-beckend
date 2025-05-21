@@ -6,7 +6,6 @@ import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ContentSessionCreateRequestDto;
 import cultureinfo.culture_app.dto.request.ContentSessionUpdateRequestDto;
 import cultureinfo.culture_app.dto.response.ContentSessionDto;
-import cultureinfo.culture_app.dto.response.SessionDto;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.repository.ContentSessionRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
