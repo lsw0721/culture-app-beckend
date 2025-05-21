@@ -58,3 +58,13 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug     # Hibernate가 생성한 SQL 쿼리를 로그(debug 레벨)로 출력
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA5V6I7GQ3O7QD3XOH
+      secret-key: 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
+    region:
+      static: ap-southeast-2
+    s3:
+      bucket: app-culture-bucket
