@@ -1,9 +1,13 @@
 package cultureinfo.culture_app.controller;
 
+import cultureinfo.culture_app.dto.request.ContentDetailCreateRequestDto;
+import cultureinfo.culture_app.dto.request.ContentDetailUpdateRequestDto;
+import cultureinfo.culture_app.dto.request.ContentSearchRequestDto;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
+import cultureinfo.culture_app.dto.response.ContentSummaryDto;
 import cultureinfo.culture_app.service.ContentDetailService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,23 +19,51 @@ public class ContentDetailController {
 
     private final ContentDetailService contentDetailService;
 
-    //콘텐츠 리스트 조회(카테고리 필터, 키워드 검색, 정렬, 페이징, 찜 여부 포함)
-    //url에 페이징 정보가 알아서 들어감
+    // 목록 조회: 대분류(main), 중분류(sub), 소분류(small) 모두 옵션으로 받아 필터링
+    // GET /api/contents?mainCategoryId=&subcategoryId=&smallCategoryId=&keyword=&...
+
     @GetMapping
-    public ResponseEntity<Slice<ContentDetailDto>> getContentDetails(
-            @RequestParam(required = false) Long categoryId,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "latest") String sortBy,
-            Pageable pageable
-    ) {
-        Slice<ContentDetailDto> details = contentDetailService.getContentDetails(categoryId, keyword, sortBy, pageable);
-        return ResponseEntity.ok(details);
+    public Slice<ContentSummaryDto> search(@Valid ContentSearchRequestDto req) {
+        return contentDetailService.search(req);
     }
 
-    //단일 콘텐츠 상세 조회(찜 여부 포함)
-    @GetMapping("/{contentDetailId}")
-    public ResponseEntity<ContentDetailDto> getContentDetail(@PathVariable Long contentDetailId) {
-        ContentDetailDto detail = contentDetailService.getContentDetail(contentDetailId);
-        return ResponseEntity.ok(detail);
+
+     // 단일 콘텐츠 상세 조회 (로그인 필요)
+     // GET /api/contents/{id}
+    @GetMapping("/{id}")
+    public ContentDetailDto getDetail(@PathVariable Long id) {
+        return contentDetailService.getContentDetail(id);
     }
+
+
+     // 콘텐츠 생성
+     // POST /api/contents
+    @PostMapping
+    public ContentDetailDto create(
+            @RequestBody @Valid ContentDetailCreateRequestDto req
+    ) {
+        return contentDetailService.createContentDetail(req);
+    }
+
+
+     // 콘텐츠 수정
+     // PUT /api/contents/{id}
+    @PutMapping("/{id}")
+    public ContentDetailDto update(
+            @PathVariable Long id,
+            @RequestBody @Valid ContentDetailUpdateRequestDto req
+    ) {
+        return contentDetailService.updateContentDetail(id, req);
+    }
+
+
+     // 콘텐츠 삭제
+     // DELETE /api/contents/{id}
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        contentDetailService.deleteContentDetail(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
