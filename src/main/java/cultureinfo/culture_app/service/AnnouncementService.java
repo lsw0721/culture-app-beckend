@@ -3,7 +3,7 @@ package cultureinfo.culture_app.service;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.domain.type.ArticleCategory;
 import cultureinfo.culture_app.dto.request.AnnouncementRequestDto;
-import cultureinfo.culture_app.dto.request.AnnouncementUpdateDto;
+import cultureinfo.culture_app.dto.request.AnnouncementUpdateRequestDto;
 
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.repository.MemberRepository;
@@ -84,7 +84,7 @@ public class AnnouncementService {
 
     // 수정: ADMIN만 가능
     @Transactional
-    public ArticleDto updateAnnouncement(Long announcemnetId, AnnouncementUpdateDto request) {
+    public ArticleDto updateAnnouncement(Long announcemnetId, AnnouncementUpdateRequestDto request) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
             throw new AccessDeniedException("로그인이 필요합니다.");
