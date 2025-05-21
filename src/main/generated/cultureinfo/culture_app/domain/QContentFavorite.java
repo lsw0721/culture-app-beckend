@@ -22,7 +22,7 @@ public class QContentFavorite extends EntityPathBase<ContentFavorite> {
 
     public static final QContentFavorite contentFavorite = new QContentFavorite("contentFavorite");
 
-    public final QContent content;
+    public final QContentDetail contentDetail;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
@@ -46,7 +46,7 @@ public class QContentFavorite extends EntityPathBase<ContentFavorite> {
 
     public QContentFavorite(Class<? extends ContentFavorite> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.content = inits.isInitialized("content") ? new QContent(forProperty("content"), inits.get("content")) : null;
+        this.contentDetail = inits.isInitialized("contentDetail") ? new QContentDetail(forProperty("contentDetail"), inits.get("contentDetail")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 

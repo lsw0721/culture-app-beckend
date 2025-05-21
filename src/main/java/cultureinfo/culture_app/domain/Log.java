@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 public class Log {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String action;
@@ -23,5 +23,5 @@ public class Log {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
-    private Content content;
+    private ContentDetail content;
 }

@@ -6,10 +6,13 @@ import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,18 +36,24 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
-    // 게시글 전체 조회
+    // 게시글 전체 조회 -> slice 적용
     @GetMapping
-    public ResponseEntity<List<ArticleDto>> getAllArticles() {
-        List<ArticleDto> articles = articleService.getAllArticles();
-        return ResponseEntity.ok(articles);
+    public ResponseEntity<Slice<ArticleSummaryDto>> getAll(
+            @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC)
+            Pageable pageable){
+        Slice<ArticleSummaryDto> slice = articleService.getAllArticles(pageable);
+        return ResponseEntity.ok(slice);
     }
 
-    //게시글 검색
+
+    //게시글 검색 -> slice 적용
     @GetMapping("/search")
-    public ResponseEntity<List<ArticleSummaryDto>> searchArticles(@RequestParam String keyword){
-        List<ArticleSummaryDto> articles = articleService.searchArticles(keyword);
-        return ResponseEntity.ok(articles);
+    public ResponseEntity<Slice<ArticleSummaryDto>> searchArticles(
+            @RequestParam String keyword,
+            @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+        Slice<ArticleSummaryDto> slice = articleService.searchArticles(keyword, pageable);
+        return ResponseEntity.ok(slice);
     }
 
     // 게시글 수정

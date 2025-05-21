@@ -32,7 +32,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final NumberPath<Long> commentCount = createNumber("commentCount", Long.class);
 
-    public final QContent content;
+    public final QContentDetail contentDetail;
 
     //inherited
     public final StringPath createBy = _super.createBy;
@@ -72,7 +72,7 @@ public class QArticle extends EntityPathBase<Article> {
 
     public QArticle(Class<? extends Article> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.content = inits.isInitialized("content") ? new QContent(forProperty("content"), inits.get("content")) : null;
+        this.contentDetail = inits.isInitialized("contentDetail") ? new QContentDetail(forProperty("contentDetail"), inits.get("contentDetail")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
     }
 

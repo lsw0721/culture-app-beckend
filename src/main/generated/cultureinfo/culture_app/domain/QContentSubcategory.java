@@ -28,6 +28,8 @@ public class QContentSubcategory extends EntityPathBase<ContentSubcategory> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<ContentSmallCategory, QContentSmallCategory> smallCategories = this.<ContentSmallCategory, QContentSmallCategory>createList("smallCategories", ContentSmallCategory.class, QContentSmallCategory.class, PathInits.DIRECT2);
+
     public QContentSubcategory(String variable) {
         this(ContentSubcategory.class, forVariable(variable), INITS);
     }

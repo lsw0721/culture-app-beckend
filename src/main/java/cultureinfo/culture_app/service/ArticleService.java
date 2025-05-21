@@ -1,18 +1,20 @@
 package cultureinfo.culture_app.service;
 
 import cultureinfo.culture_app.domain.Article;
-import cultureinfo.culture_app.domain.Content;
+import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
 import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.repository.ArticleRepository;
-import cultureinfo.culture_app.repository.ContentRepository;
+import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
-    private final ContentRepository contentRepository;
+    private final ContentDetailRepository contentDetailRepository;
     private final SecurityUtil securityUtil;
 
     //게시글 작성: 로그인한 사용자만 가능
@@ -39,14 +41,14 @@ public class ArticleService {
         }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
-        Content content = contentRepository.findById(request.getContentId())
+        ContentDetail contentDetail = contentDetailRepository.findById(request.getContentId())
                 .orElseThrow(() -> new EntityNotFoundException("콘텐츠가 존재하지 않습니다."));
         Article article = Article.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
                 .category(request.getCategory())
                 .member(member)
-                .content(content)
+                .contentDetail(contentDetail)
                 .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
@@ -63,23 +65,22 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     // 전체 조회
-    public List<ArticleDto> getAllArticles() {
-        List<Article> articles = articleRepository.findAll();
-        List<ArticleDto> result = new ArrayList<>();
-        for (Article article : articles) {
-            result.add(ArticleDto.from(article));
-        }
-        return result;
+    public Slice<ArticleSummaryDto> getAllArticles(Pageable pageable) {
+        // Slice<Article>을 리포지토리에서 받아오고
+        Slice<Article> slice = articleRepository.findAllBy(pageable);
+        // DTO 로 매핑한 Slice 반환
+        return slice.map(ArticleSummaryDto::from);
     }
 
     //검색(제목 or 본문의 일부 내용 입력 시 검색 가능)
     @Transactional(readOnly = true)
-    public List<ArticleSummaryDto> searchArticles(String keyword) {
-        List<Article> articles = articleRepository.searchByKeyword(keyword);
-        return articles.stream()
-                .map(ArticleSummaryDto::from)
-                .toList();
+    public Slice<ArticleSummaryDto> searchArticles(String keyword, Pageable pageable) {
+        Slice<Article> slice = articleRepository.searchByKeyword(keyword, pageable);
+        // DTO로 매핑한 Slice 반환
+        return slice.map(ArticleSummaryDto::from);
     }
+
+
 
     // 수정: 작성자 또는 ADMIN만 가능
     @Transactional
