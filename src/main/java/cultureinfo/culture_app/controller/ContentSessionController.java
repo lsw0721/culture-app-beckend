@@ -39,7 +39,6 @@ public class ContentSessionController {
     //세션 수정
     @PutMapping("/{sessionId}")
     public ContentSessionDto updateSession(
-            @PathVariable Long contentId,
             @PathVariable Long sessionId,
             @RequestBody @Valid ContentSessionUpdateRequestDto dto
     ) {
@@ -49,7 +48,6 @@ public class ContentSessionController {
     //세션 삭제
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> deleteSession(
-            @PathVariable Long contentId,
             @PathVariable Long sessionId
     ) {
         sessionService.deleteSession(sessionId);
