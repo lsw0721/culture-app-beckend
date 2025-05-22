@@ -20,9 +20,9 @@ public class QContentCategory extends EntityPathBase<ContentCategory> {
 
     public static final QContentCategory contentCategory = new QContentCategory("contentCategory");
 
-    public final StringPath contentCategoryName = createString("contentCategoryName");
-
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final StringPath name = createString("name");
 
     public final ListPath<ContentSubcategory, QContentSubcategory> subcategories = this.<ContentSubcategory, QContentSubcategory>createList("subcategories", ContentSubcategory.class, QContentSubcategory.class, PathInits.DIRECT2);
 

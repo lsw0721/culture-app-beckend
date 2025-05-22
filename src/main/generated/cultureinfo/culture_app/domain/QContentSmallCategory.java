@@ -22,13 +22,13 @@ public class QContentSmallCategory extends EntityPathBase<ContentSmallCategory> 
 
     public static final QContentSmallCategory contentSmallCategory = new QContentSmallCategory("contentSmallCategory");
 
-    public final StringPath ContentSmallCategoryName = createString("ContentSmallCategoryName");
-
     public final QContentSubcategory contentSubcategory;
 
     public final ListPath<ContentDetail, QContentDetail> details = this.<ContentDetail, QContentDetail>createList("details", ContentDetail.class, QContentDetail.class, PathInits.DIRECT2);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final StringPath name = createString("name");
 
     public QContentSmallCategory(String variable) {
         this(ContentSmallCategory.class, forVariable(variable), INITS);

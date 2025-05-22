@@ -146,7 +146,7 @@ MemberController {
     @PutMapping("/profile/announcement/{id}")
     public ResponseEntity<ArticleDto> updateAnnouncement(
             @PathVariable Long id,
-            @RequestBody AnnouncementUpdateDto requestDto) {
+            @RequestBody AnnouncementUpdateRequestDto requestDto) {
 
         ArticleDto updated = announcementService.updateAnnouncement(id, requestDto);
         return ResponseEntity.ok(updated);
@@ -170,8 +170,6 @@ MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    
-    
     // --- JWT 토큰 재발급 ---
 
     // 10) 토큰 재발급
