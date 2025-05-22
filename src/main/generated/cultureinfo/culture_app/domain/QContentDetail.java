@@ -22,13 +22,17 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public static final QContentDetail contentDetail = new QContentDetail("contentDetail");
 
+    public final StringPath artistName = createString("artistName");
+
+    public final StringPath brandName = createString("brandName");
+
     public final ListPath<ContentFavorite, QContentFavorite> contentFavorite = this.<ContentFavorite, QContentFavorite>createList("contentFavorite", ContentFavorite.class, QContentFavorite.class, PathInits.DIRECT2);
 
     public final StringPath contentName = createString("contentName");
 
     public final QContentSmallCategory contentSmallCategory;
 
-    public final StringPath details = createString("details");
+    public final StringPath detailsJson = createString("detailsJson");
 
     public final DateTimePath<java.time.LocalDateTime> endDateTime = createDateTime("endDateTime", java.time.LocalDateTime.class);
 
@@ -41,6 +45,10 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
     public final StringPath picture = createString("picture");
 
     public final NumberPath<Long> price = createNumber("price", Long.class);
+
+    public final ListPath<ContentSession, QContentSession> sessions = this.<ContentSession, QContentSession>createList("sessions", ContentSession.class, QContentSession.class, PathInits.DIRECT2);
+
+    public final StringPath sportTeamName = createString("sportTeamName");
 
     public final DateTimePath<java.time.LocalDateTime> startDateTime = createDateTime("startDateTime", java.time.LocalDateTime.class);
 

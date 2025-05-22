@@ -5,7 +5,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.QContentDetail;
-import cultureinfo.culture_app.dto.response.ContentDetailDto;
+
+import cultureinfo.culture_app.dto.response.ContentSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,22 +17,32 @@ import java.util.List;
 import java.util.Set;
 
 @RequiredArgsConstructor
+//콘텐츠 검색 기능
 public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final ContentFavoriteRepository contentFavoriteRepository;
 
     @Override
-    public Slice<ContentDetailDto> searchContentDetails(
-            Long categoryId, String keyword, String sortBy, Pageable pageable,
-            Long memberId ) {
+    public Slice<ContentSummaryDto> searchContentDetails(
+            Long categoryId,
+            Long subcategoryId,
+            Long smallCategoryId,
+            String keyword,
+            String artistName,
+            String sportTeamName,
+            String brandName,
+            String sortBy,
+            Pageable pageable,
+            Long memberId
+    ) {
         QContentDetail contentDetail = QContentDetail.contentDetail;
         BooleanBuilder builder = new BooleanBuilder();
 
-        //ContentDetail -> 소분류 -> 중분류 -> 대분류의 id가 categoryId와 같은 콘텐츠만 검색
+        //ContentDetail -> 소분류 -> 중분류 -> 대분류의 id가 categoryId와 일치하는 콘텐츠만 검색
         //타입 안전
         //연관관계 자동 조인
 
-        //필터링 - 카테고리
+        //필터링 - 대분류
         if(categoryId != null) {
             builder.and(contentDetail
                     .contentSmallCategory
@@ -40,18 +51,32 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
                     .id.eq(categoryId));
         }
 
-        //필터링 - 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
-        if(keyword != null && !keyword.isBlank()) {
+        //필터링 - 중분류
+        if(subcategoryId != null) {
             builder.and(contentDetail
-                    .contentName
-                    .containsIgnoreCase(keyword));
+                    .contentSmallCategory
+                    .contentSubcategory
+                    .id.eq(subcategoryId));
         }
+
+        //필터링 소분류
+        if(smallCategoryId != null) {
+            builder.and(contentDetail
+                    .contentSmallCategory
+                    .id.eq(smallCategoryId));
+        }
+
+        //필터링 - 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
+        if (keyword!=null&&!keyword.isBlank()) builder.and(contentDetail.contentName.containsIgnoreCase(keyword));
+        if (artistName!=null&&!artistName.isBlank()) builder.and(contentDetail.artistName.containsIgnoreCase(artistName));
+        if (sportTeamName!=null&&!sportTeamName.isBlank()) builder.and(contentDetail.sportTeamName.containsIgnoreCase(sportTeamName));
+        if (brandName!=null&&!brandName.isBlank()) builder.and(contentDetail.brandName.containsIgnoreCase(brandName));
 
         //정렬 기준 설정
         OrderSpecifier<?> orderSpecifier = switch (sortBy){
             case "favoriteCount" -> contentDetail.favoriteCount.desc(); // 좋아요 내림차순
             case "startDateTime" -> contentDetail.startDateTime.asc(); // 시작일순 오름차순
-            default -> contentDetail.startDateTime.desc(); // 시작일수 내림차순(최근 것 부터)
+            default -> contentDetail.startDateTime.desc(); // 시작일수 내림차순(최근 것 부터)  기본 설정
         };
 
         //데이터 조회(size+1개로 hasNext 판단)
@@ -81,8 +106,8 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
         }
 
         //dto 변환 및 찜 여부 포함
-        List<ContentDetailDto> result = contents.stream()
-                .map(c -> ContentDetailDto.from(c, favoriteIds.contains(c.getId())))
+        List<ContentSummaryDto> result = contents.stream()
+                .map(c -> ContentSummaryDto.of(c))
                 .toList();
 
         return new SliceImpl<>(result, pageable, hasNext);
