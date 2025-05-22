@@ -26,13 +26,13 @@ public class ContentDetailDto {
     private String artistName; // 가수 이름
     private String sportTeamName; // 스포츠 팀 이름
     private String brandName; // 팝업 브랜드 이름
-    private List<SessionDto> sessions; // 일별 세션
+    private List<ContentSessionDto> sessions; // 일별 세션
     private String detailsJson; // 세부정보
 
 
     public static ContentDetailDto from(ContentDetail d, boolean fav) {
-        List<SessionDto> sessions = d.getSessions().stream()
-                .map(s -> new SessionDto(s.getId(), s.getSessionDate(), s.getInfoJson()))
+        List<ContentSessionDto> sessions = d.getSessions().stream()
+                .map(s -> new ContentSessionDto(s.getId(), s.getSessionDate(), s.getInfoJson()))
                 .toList();
 
         return ContentDetailDto.builder()
