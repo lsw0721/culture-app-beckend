@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 public class MemberProfileEditRequestDto {
     @NotBlank
     private String name;
-    @NotBlank
-    private String currentPassword;
     @Email @NotBlank
     private String email;
     @NotBlank
