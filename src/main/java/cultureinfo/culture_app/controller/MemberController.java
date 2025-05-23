@@ -54,12 +54,12 @@ MemberController {
     public ResponseEntity<String> join(@Valid @RequestBody JoinRequestDTO req) {
         try{
             if (!emailService.verifyAuthCode(req.getEmail(), req.getAuthcode())) {
-                return ResponseEntity.status(400).body("Email Verification");
+                return ResponseEntity.status(401).body("Email Verification");
             }
             String username = memberService.join(req);
             return ResponseEntity.status(HttpStatus.CREATED).body(username); //201
         } catch (IllegalArgumentException e) { 
-            return ResponseEntity.status(400).body(e.getMessage()); //아이디 혹은 이메일 중복
+            return ResponseEntity.status(401).body(e.getMessage()); //아이디 혹은 이메일 중복
         } catch (Exception e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
