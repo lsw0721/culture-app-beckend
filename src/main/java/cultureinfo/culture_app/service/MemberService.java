@@ -165,7 +165,6 @@ public class MemberService {
     //프로필 변경
     @Transactional
     public MemberDto updateProfile(MemberProfileEditRequestDto req) {
-        verifyCurrentPassword(req.getCurrentPassword());
 
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
