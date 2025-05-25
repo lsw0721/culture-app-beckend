@@ -175,7 +175,6 @@ MemberController {
     }
 
     // 자신이 쓴 게시글 확인
-    //실 실행은 나중에
     @GetMapping("/profile/myarticle")
     public ResponseEntity<List<ArticleDto>> getMyArticles() {
         List<ArticleDto> articles = articleService.getMyArticles();
