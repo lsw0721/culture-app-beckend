@@ -10,7 +10,6 @@ import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.JwtTokenProvider;
 import cultureinfo.culture_app.security.SecurityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -75,10 +74,8 @@ public class MemberService {
             // authenticate 메서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드 실행
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-            // 3. 인증 정보를 기반으로 JWT 토큰 생성
-            JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
-
-            return jwtToken;
+            // 3. 인증 정보를 기반으로 JWT 토큰 생성 및 반환
+            return jwtTokenProvider.generateToken(authentication);
     }
 
     //단건 조회

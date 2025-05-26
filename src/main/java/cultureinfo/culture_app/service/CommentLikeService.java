@@ -10,9 +10,7 @@ import cultureinfo.culture_app.repository.CommentLikeRepository;
 import cultureinfo.culture_app.repository.CommentRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

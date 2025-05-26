@@ -12,8 +12,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.IIOException;
-import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/api/contents")
