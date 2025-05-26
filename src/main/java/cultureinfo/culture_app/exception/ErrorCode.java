@@ -31,7 +31,7 @@ public enum ErrorCode {
     ARTICLE_NOT_FOUND("CONTENT_004", HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
     COMMENT_NOT_FOUND("CONTENT_005", HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),
     ARTICLE_LIKE_NOT_FOUND("CONTENT_006", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
-    COMMENT_LIKE_NOT_FOUND("CONTENT_006", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
+    COMMENT_LIKE_NOT_FOUND("CONTENT_007", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
 
     // 공통
     INTERNAL_SERVER_ERROR("COMMON_999", HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
