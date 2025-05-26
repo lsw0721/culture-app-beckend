@@ -18,4 +18,5 @@ public class JoinRequestDTO {
     @NotNull private Gender gender;
     @NotBlank private String location;
     @NotBlank private String nickname;
+    @NotBlank private String authcode;
 }

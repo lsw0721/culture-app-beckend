@@ -73,7 +73,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/members/join/**", "/api/members/sign-in", "/api/members/reissue")
+                        .requestMatchers("/api/members/join", "/api/members/sign-in", "/api/members/reissue", "/api/members/join/send-email", "/error",
+                        "/api/members/find-username", "/api/members/find-password/temp")
                         .permitAll()
                         .requestMatchers("/test")
                         .hasRole("USER")

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,82 +32,146 @@ MemberController {
     private final ArticleService articleService;
     private final AnnouncementService announcementService;
 
-    // --- 회원가입 및 로그임 ---
+    //
+
+    // --- 회원가입 및 로그인 ---
 
     //회원가입 인증용 이메일 전송
+    //이메일 형식 틀리면 400에러
     @PostMapping("/join/send-email")
-    public ResponseEntity<Void> sendJoinEmail(@RequestParam String email) {
-        emailService.sendJoinEmail(email);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> sendJoinEmail(@Valid @RequestBody JoinEmailRequestDto email) {
+        try{
+            emailService.sendJoinEmail(email.getEmail());
+            return ResponseEntity.noContent().build(); //204
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //회원가입
+    //400 에러는 email 형식에 맞지 않거나, null 값을 받았을 때, 그럴 때 발생
     @PostMapping("/join")
     public ResponseEntity<String> join(@Valid @RequestBody JoinRequestDTO req) {
-        String username = memberService.join(req);
-        return ResponseEntity.status(HttpStatus.CREATED).body(username);
+        try{
+            if (!emailService.verifyAuthCode(req.getEmail(), req.getAuthcode())) {
+                return ResponseEntity.status(401).body("Email Verification");
+            }
+            String username = memberService.join(req);
+            return ResponseEntity.status(HttpStatus.CREATED).body(username); //201
+        } catch (IllegalArgumentException e) { 
+            return ResponseEntity.status(401).body(e.getMessage()); //아이디 혹은 이메일 중복
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 
     //키워드 저장
+    //400 에러는 형식에 맞지 않거나, null 값을 받았을 때, 그럴 때 발생
     @PatchMapping("/keywords")
     public ResponseEntity<Void> updateKeywords(@Valid @RequestBody UpdateKeywordRequestDto req) {
-        memberService.updateKeyword(req);
-        return ResponseEntity.noContent().build();
+        try{
+            memberService.updateKeyword(req);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //로그인
     @PostMapping("/sign-in")
     public ResponseEntity<JwtToken> signIn(@Valid @RequestBody LoginRequestDTO req){
-        JwtToken token = memberService.signIn(req.getUsername(), req.getPassword());
-        return ResponseEntity.ok(token);
+        try{
+            JwtToken token = memberService.signIn(req.getUsername(), req.getPassword());
+            return ResponseEntity.ok(token);
+        } catch (IllegalArgumentException e) { //로그인 에러
+            return ResponseEntity.status(401).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //이메일로 아이디 찾기
+    //400 에러는 이메일 형식이 안 맞거나 null일 때
     @PostMapping("/find-username")
     public ResponseEntity<String> findUsernameByEmail(@Valid @RequestBody FindIdRequestDTO req){
-        String username = memberService.findUsernameByEmail(req);
-        return ResponseEntity.ok(username);
+        try{
+            String username = memberService.findUsernameByEmail(req);
+            return ResponseEntity.ok(username);
+        } catch (IllegalArgumentException e) { //존재하지 않을 때
+            return ResponseEntity.status(401).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //비밀번호 찾기(임시 비밀번호 사용)
     @PostMapping("/find-password/temp")
     public ResponseEntity<Void> sendPasswordEmail(@Valid @RequestBody TempPasswordRequestDto req) {
-        emailService.sendTemporaryPassword(req.getUsername(), req.getEmail());
-        return ResponseEntity.noContent().build();
+        try{
+            emailService.sendTemporaryPassword(req.getUsername(), req.getEmail());
+            return ResponseEntity.noContent().build(); //204
+        } catch (IllegalArgumentException e) { //존재하지 않을 때
+            return ResponseEntity.status(401).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    
     }
 
     //---개인정보 수정 로직---
 
     //프로필 조회 전 비밀번호 검증
+    //400 입력을 안하면
     @PostMapping("/profile/verify")
     public ResponseEntity<Void> verifyProfilePassword(@Valid @RequestBody VerifyPasswordRequestDto req){
-        memberService.verifyCurrentPassword(req.getPassword());
-        return ResponseEntity.ok().build();
+        try{
+            memberService.verifyCurrentPassword(req.getPassword());
+            return ResponseEntity.ok().build(); //200
+        } catch (IllegalArgumentException e) { //비밀번호가 틀렸을 때
+            return ResponseEntity.status(401).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //프로필 확인(내 정보 조회) -> 수정 필요
     @GetMapping("/profile/me")
     public ResponseEntity<MemberDto> getCurrentProfile() {
-        MemberDto dto = memberService.getCurrentMember();
-        return ResponseEntity.ok(dto);
+        try{
+            MemberDto dto = memberService.getCurrentMember();
+            return ResponseEntity.ok(dto); //200
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 8) 프로필 변경
-    @PutMapping("/profile/update-profile")
-    public ResponseEntity<MemberDto> updateProfile(
-            @Valid @RequestBody MemberProfileEditRequestDto req
+    //400은 이메일 형식 그런 거 안 지켰을 때 발생
+    @PutMapping("/profile/me")
+    public ResponseEntity<MemberDto> updateProfile(@Valid
+             @RequestBody MemberProfileEditRequestDto req
     ) {
-        MemberDto updated = memberService.updateProfile(req);
-        return ResponseEntity.ok(updated);
+        try{
+            MemberDto updated = memberService.updateProfile(req);
+            return ResponseEntity.ok(updated); //200
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 9) 비밀번호 변경
     @PutMapping("/profile/update-password")
-    public ResponseEntity<Void> changePassword(
-            @Valid @RequestBody UpdatePasswordRequestDto req
+    public ResponseEntity<Void> changePassword(@Valid 
+           @RequestBody UpdatePasswordRequestDto req
     ) {
-        memberService.updatePassword(req);
-        return ResponseEntity.noContent().build();
+        try{
+            memberService.updatePassword(req);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) { //비밀번호가 틀렸을 때
+            return ResponseEntity.status(401).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 자신이 쓴 게시글 확인
@@ -135,11 +200,16 @@ MemberController {
     @PostMapping("/profile/announcement")
     public ResponseEntity<ArticleDto> createAnnouncement(
             @RequestBody AnnouncementRequestDto requestDto) {
-
-        ArticleDto created = announcementService.createAnnouncement(requestDto);
-        return ResponseEntity
+        try{
+            ArticleDto created = announcementService.createAnnouncement(requestDto);
+            return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(created);
+                .body(created); //201
+        } catch(AccessDeniedException e){
+            return ResponseEntity.status(401).build(); //권한 부족
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 공지사항 수정
@@ -147,16 +217,27 @@ MemberController {
     public ResponseEntity<ArticleDto> updateAnnouncement(
             @PathVariable Long id,
             @RequestBody AnnouncementUpdateRequestDto requestDto) {
-
-        ArticleDto updated = announcementService.updateAnnouncement(id, requestDto);
-        return ResponseEntity.ok(updated);
+        try{
+            ArticleDto updated = announcementService.updateAnnouncement(id, requestDto);
+            return ResponseEntity.ok(updated); //200
+        } catch(AccessDeniedException e){
+            return ResponseEntity.status(401).build(); //권한 부족
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // 공지사항 삭제
     @DeleteMapping("/profile/announcement/{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
-        announcementService.deleteAnnouncement(id);
-        return ResponseEntity.noContent().build();
+        try{
+            announcementService.deleteAnnouncement(id);
+            return ResponseEntity.noContent().build(); //204
+        } catch(AccessDeniedException e){
+            return ResponseEntity.status(401).build(); //권한 부족
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     //1:1 이메일 문의
@@ -167,7 +248,7 @@ MemberController {
             @RequestBody InquiryRequestDto requestDto) {
 
         emailService.sendInquiry(requestDto);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); //204
     }
 
     // --- JWT 토큰 재발급 ---

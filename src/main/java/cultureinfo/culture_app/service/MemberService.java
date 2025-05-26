@@ -41,6 +41,9 @@ public class MemberService {
         if (memberRepository.existsByEmail(joinRequestDTO.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
+        if (memberRepository.existsByEmail(joinRequestDTO.getNickname())) {
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+        }
 
         String encodedPassword = passwordEncoder.encode(joinRequestDTO.getPassword());
 
@@ -165,7 +168,6 @@ public class MemberService {
     //프로필 변경
     @Transactional
     public MemberDto updateProfile(MemberProfileEditRequestDto req) {
-        verifyCurrentPassword(req.getCurrentPassword());
 
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
