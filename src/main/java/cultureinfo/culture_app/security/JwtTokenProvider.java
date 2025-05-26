@@ -14,6 +14,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -162,7 +164,7 @@ public class JwtTokenProvider {
     public JwtToken reissueAccessToken(TokenRequestDto req) {
 
         if (!validateToken(req.getRefreshToken())) {
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+            throw new CustomException(ErrorCode.RUNTIME_EXCEPTION));
         }
         Authentication authentication = getAuthentication(req.getAccessToken());
         String refreshToken = req.getRefreshToken();
