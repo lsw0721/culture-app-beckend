@@ -5,6 +5,8 @@ import cultureinfo.culture_app.domain.type.Role;
 import cultureinfo.culture_app.dto.request.*;
 import cultureinfo.culture_app.dto.response.MemberDto;
 import cultureinfo.culture_app.dto.security.JwtToken;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.JwtTokenProvider;
 import cultureinfo.culture_app.security.SecurityUtil;
@@ -36,10 +38,10 @@ public class MemberService {
     public String join(JoinRequestDTO joinRequestDTO) {
 
         if (memberRepository.existsByUsername(joinRequestDTO.getUsername())) {
-            throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
         if (memberRepository.existsByEmail(joinRequestDTO.getEmail())) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         String encodedPassword = passwordEncoder.encode(joinRequestDTO.getPassword());
@@ -61,12 +63,11 @@ public class MemberService {
     //로그인
     @Transactional
     public JwtToken signIn(String username, String password) {
-        try{
             Member member = memberRepository.findByUsername(username)
-                    .orElseThrow(() -> new IllegalArgumentException("해당 아이디를 가진 유저가 없습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
             // 입력된 비밀번호와 해시된 비밀번호 비교
             if (!bCryptPasswordEncoder.matches(password, member.getPassword())) {
-                throw new IllegalArgumentException("잘못된 비밀번호입니다.");
+                throw new CustomException(ErrorCode.INVALID_PASSWORD);
             }
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(username, password);
@@ -78,17 +79,13 @@ public class MemberService {
             JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
             return jwtToken;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
     }
 
     //단건 조회
 
     public MemberDto getMemberById(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return MemberDto.from(member);
     }
 
@@ -97,7 +94,7 @@ public class MemberService {
     public void updateKeyword(UpdateKeywordRequestDto req) {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if(req.getKeyword1() != null)
             member.updateKeyword1(req.getKeyword1());
         if(req.getKeyword2() != null)
@@ -112,7 +109,7 @@ public class MemberService {
         return memberRepository.findByEmail(req.getEmail())
                 .filter(member -> member.getName().equals(req.getName()))
                 .map(Member::getUsername)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.EMAIL_NOT_FOUND));
     }
 
     //아이디 + 이메일로 본인 인증 후 비밀번호 변경
@@ -123,8 +120,7 @@ public class MemberService {
         Member member = memberRepository.findByUsername(username)
                 .filter(m ->  m.getEmail().equals(email))
                 .orElseThrow(() ->
-                        new IllegalArgumentException("아이디와 이메일이 일치하지 않습니다.")
-                );
+                        new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH));
         String encoded = passwordEncoder.encode(tempPassword);
         member.changePassword(encoded);
     }
@@ -135,7 +131,7 @@ public class MemberService {
         memberRepository.findByUsername(username)
                 .filter(m -> m.getEmail().equals(email))
                 .orElseThrow(() ->
-                        new IllegalArgumentException("아이디와 이메일이 일치하지 않습니다."));
+                        new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH));
     }
 
     //개인정보(프로필, 비밀번호) 수정을 하려면 비밀번호를 입력해야 함
@@ -147,9 +143,9 @@ public class MemberService {
     public void verifyCurrentPassword(String password) {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if (!bCryptPasswordEncoder.matches(password, member.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
     }
 
@@ -158,7 +154,7 @@ public class MemberService {
     public MemberDto getCurrentMember() {
         Long userId = securityUtil.getCurrentId();
         Member m = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return MemberDto.from(m);
     }
 
@@ -169,7 +165,7 @@ public class MemberService {
 
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         member.update(req.getName(), req.getNickname(), req.getLocation(), req.getGender(), req.getEmail());
         return MemberDto.from(member);
     }
@@ -179,9 +175,9 @@ public class MemberService {
     public void updatePassword(UpdatePasswordRequestDto req) {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if (!bCryptPasswordEncoder.matches(req.getCurrentPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
         String newPassword = passwordEncoder.encode(req.getNewPassword());
         member.changePassword(newPassword);
@@ -192,7 +188,7 @@ public class MemberService {
     public String getEmailbyId() {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return member.getEmail();
     }
 

@@ -6,6 +6,8 @@ import cultureinfo.culture_app.dto.request.AnnouncementRequestDto;
 import cultureinfo.culture_app.dto.request.AnnouncementUpdateRequestDto;
 
 import cultureinfo.culture_app.dto.response.ArticleDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -36,16 +38,16 @@ public class AnnouncementService {
     public ArticleDto createAnnouncement(AnnouncementRequestDto request) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
 
         if (!isAdmin) {
-            throw new AccessDeniedException("글 작성 권한이 없습니다.");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         Article announcement = Article.builder()
@@ -79,7 +81,7 @@ public class AnnouncementService {
     @Transactional(readOnly = true)
     public ArticleDto getAnnouncement(Long id) {
         return ArticleDto.from(articleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("공지사항이 존재하지 않습니다.")));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND)));
     }
 
     // 수정: ADMIN만 가능
@@ -87,18 +89,18 @@ public class AnnouncementService {
     public ArticleDto updateAnnouncement(Long announcemnetId, AnnouncementUpdateRequestDto request) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Article announcement = articleRepository.findById(announcemnetId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isAdmin) {
-            throw new AccessDeniedException("글 수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_MODIFICATION);
         }
         announcement.update(request.getTitle(), request.getBody(), ArticleCategory.NOTICE);
         announcement.setLastModifiedBy(announcement.getMember().getUsername());
@@ -112,20 +114,20 @@ public class AnnouncementService {
     public void deleteAnnouncement(Long announcementId) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
 
         Article announcement = articleRepository.findById(announcementId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isAdmin) {
-            throw new AccessDeniedException("글 삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_DELETION);
         }
         articleRepository.delete(announcement);
     }

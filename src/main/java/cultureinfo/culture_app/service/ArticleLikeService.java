@@ -4,6 +4,8 @@ import cultureinfo.culture_app.domain.Article;
 import cultureinfo.culture_app.domain.ArticleLike;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.response.ArticleLikeDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ArticleLikeRepository;
 import cultureinfo.culture_app.repository.ArticleRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
@@ -27,19 +29,19 @@ public class ArticleLikeService {
     public ArticleLikeDto toggleLike(Long articleId) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean liked;
 
         if (articleLikeRepository.existsByArticleIdAndMemberId(articleId, memberId)) {
             ArticleLike existing = articleLikeRepository
                     .findByArticleIdAndMemberId(articleId, memberId)
-                    .orElseThrow(() -> new EntityNotFoundException("게시글 좋아요가 존재하지 않습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_LIKE_NOT_FOUND));
             articleLikeRepository.delete(existing);
             article.decreaseLikeCount();
             liked = false;

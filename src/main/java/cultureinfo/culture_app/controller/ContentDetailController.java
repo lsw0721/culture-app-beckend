@@ -12,6 +12,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.IIOException;
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/contents")
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public class ContentDetailController {
      // 콘텐츠 생성
      // POST /api/contents
     @PostMapping
-    public ContentDetailDto create(
+    public ContentDetailDto create (
             @RequestBody @Valid ContentDetailCreateRequestDto req
     ) {
         return contentDetailService.createContentDetail(req);

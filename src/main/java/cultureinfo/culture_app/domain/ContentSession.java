@@ -2,6 +2,7 @@ package cultureinfo.culture_app.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -21,6 +22,9 @@ public class ContentSession {
     @Column(nullable = false)
     private LocalDate sessionDate;
 
+    @Column(nullable = true)
+    private String picture; // 콘텐츠 사진 - URL 경로 설계 등 필요(옵션)
+
     @Lob
     @Column(nullable = true)
     private String infoJson; // 세션별 추가 정보
@@ -31,5 +35,9 @@ public class ContentSession {
 
     public void changeInfoJson(String infoJson) {
         this.infoJson = infoJson;
+    }
+
+    public void changePicture(String picture) {
+        this.picture = picture;
     }
 }

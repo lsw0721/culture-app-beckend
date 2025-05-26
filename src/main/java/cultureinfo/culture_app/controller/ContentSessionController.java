@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.IIOException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -27,10 +29,10 @@ public class ContentSessionController {
 
     //세션 생성
     @PostMapping
-    public ResponseEntity<ContentSessionDto> createSession(
+    public ResponseEntity<ContentSessionDto> createSession (
             @PathVariable Long contentId,
             @RequestBody @Valid ContentSessionCreateRequestDto dto
-    ) {
+    ) throws IOException {
         dto.setContentDetailId(contentId);
         ContentSessionDto created = sessionService.createSession(dto);
         return ResponseEntity.ok(created);
@@ -41,7 +43,7 @@ public class ContentSessionController {
     public ContentSessionDto updateSession(
             @PathVariable Long sessionId,
             @RequestBody @Valid ContentSessionUpdateRequestDto dto
-    ) {
+    ) throws IOException {
         return sessionService.updateSession(sessionId, dto);
     }
 
@@ -49,7 +51,7 @@ public class ContentSessionController {
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> deleteSession(
             @PathVariable Long sessionId
-    ) {
+    ) throws IOException {
         sessionService.deleteSession(sessionId);
         return ResponseEntity.noContent().build();
     }

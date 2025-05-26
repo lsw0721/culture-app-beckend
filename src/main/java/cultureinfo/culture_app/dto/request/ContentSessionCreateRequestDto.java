@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -22,4 +23,6 @@ public class ContentSessionCreateRequestDto {
     private LocalDate sessionDate;
 
     private String infoJson;
+
+    private MultipartFile pictureFile;
 }

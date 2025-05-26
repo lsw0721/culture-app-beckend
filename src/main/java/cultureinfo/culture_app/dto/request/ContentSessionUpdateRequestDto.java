@@ -1,6 +1,7 @@
 package cultureinfo.culture_app.dto.request;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -14,4 +15,5 @@ public class ContentSessionUpdateRequestDto {
     @NotNull
     private LocalDate sessionDate;
     private String infoJson;
+    private MultipartFile pictureFile;
 }

@@ -5,6 +5,8 @@ import cultureinfo.culture_app.domain.Comment;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.CommentRequestDto;
 import cultureinfo.culture_app.dto.response.CommentDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ArticleRepository;
 import cultureinfo.culture_app.repository.CommentRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
@@ -33,12 +35,12 @@ public class CommentService {
     public CommentDto createComment(Long articleId, CommentRequestDto requestDto) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
 
         Comment comment = Comment.builder()
                 .commentContent(requestDto.getCommentContent())
@@ -68,18 +70,18 @@ public class CommentService {
     public CommentDto updateComment(Long commentId, CommentRequestDto requestDto) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean isOwner = comment.getMember().getId().equals(memberId);
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isOwner && !isAdmin) {
-            throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_MODIFICATION);
         }
         
         comment.updateContent(requestDto.getCommentContent());
@@ -93,18 +95,18 @@ public class CommentService {
     public void deleteComment(Long commentId) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean isOwner = comment.getMember().getId().equals(memberId);
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isOwner && !isAdmin) {
-            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_DELETION);
         }
         commentRepository.delete(comment);
         comment.getArticle().decreaseCommentCount();
