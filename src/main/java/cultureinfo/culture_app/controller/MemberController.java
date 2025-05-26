@@ -3,11 +3,13 @@ package cultureinfo.culture_app.controller;
 
 import cultureinfo.culture_app.dto.request.*;
 import cultureinfo.culture_app.dto.response.ArticleDto;
+import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import cultureinfo.culture_app.dto.response.MemberDto;
 import cultureinfo.culture_app.dto.security.JwtToken;
 import cultureinfo.culture_app.security.JwtTokenProvider;
 import cultureinfo.culture_app.service.AnnouncementService;
 import cultureinfo.culture_app.service.ArticleService;
+import cultureinfo.culture_app.service.ContentFavoriteService;
 import cultureinfo.culture_app.service.EmailService;
 import cultureinfo.culture_app.service.MemberService;
 import jakarta.validation.Valid;
@@ -124,6 +126,13 @@ MemberController {
     public ResponseEntity<List<ArticleDto>> getMyArticles() {
         List<ArticleDto> articles = articleService.getMyArticles();
         return ResponseEntity.ok(articles);
+    }
+
+    // 자신이 찜한 컨텐츠 확인
+    @GetMapping("/profile/mycontent")
+    public ResponseEntity<List<ContentDetailDto>> getMyContents() {
+        List<ContentDetailDto> contents = contentFavoriteService.isMyFavorite();
+        return ResponseEntity.ok(contents);
     }
 
     //------------------공지사항--------------------
