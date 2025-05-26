@@ -5,7 +5,6 @@ import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.service.ArticleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

@@ -4,10 +4,8 @@ package cultureinfo.culture_app.controller;
 import cultureinfo.culture_app.dto.request.CommentRequestDto;
 import cultureinfo.culture_app.dto.response.CommentDto;
 import cultureinfo.culture_app.service.CommentService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
