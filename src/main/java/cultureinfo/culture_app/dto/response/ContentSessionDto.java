@@ -12,4 +12,5 @@ public class ContentSessionDto {
     private Long id;
     private LocalDate sessionDate;
     private String infoJson;
+    private String picture;
 }

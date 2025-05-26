@@ -2,6 +2,8 @@ package cultureinfo.culture_app.service;
 
 import java.io.IOException;
 
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,34 +24,41 @@ public class S3Service {
     private String bucket;
 
     //파일 업로드
-    public String upload(MultipartFile file, Long contentId) throws IOException {
+    public String upload(MultipartFile file, Long contentId) {
+        try{
+            String fileName = contentId + ".jpg";
 
-        String fileName = contentId + ".jpg";
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileName)
+                    .contentType("image/jpeg") //jpg만 받기
+                    .build();
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucket)
-                .key(fileName)
-                .contentType("image/jpeg") //jpg만 받기
-                .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+            return getUrl(fileName);
+            // https://app-culture-bucket.s3.ap-southeast-2.amazonaws.com/ + (content_Id)+".jpg"
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.FILE_UPLOAD_FAILED);
+        }
 
-        return getUrl(fileName);
-        // https://app-culture-bucket.s3.ap-southeast-2.amazonaws.com/ + (content_Id)+".jpg"
 
     }
 
     //파일 삭제
-    public void deleteFile(Long contentId) throws IOException {
-        String fileName = contentId + ".jpg";
+    public void deleteFile(Long contentId) {
+        try {
+            String fileName = contentId + ".jpg";
 
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucket)
-                .key(fileName)
-                .build();
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileName)
+                    .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
-
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.FILE_DELETE_FAILED);
+        }
     }
 
     public String getUrl(String fileName) {

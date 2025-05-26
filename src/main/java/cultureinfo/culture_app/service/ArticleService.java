@@ -7,15 +7,15 @@ import cultureinfo.culture_app.dto.request.ArticleRequestDto;
 import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ArticleRepository;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +37,12 @@ public class ArticleService {
     public ArticleDto createArticle(ArticleRequestDto request) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         ContentDetail contentDetail = contentDetailRepository.findById(request.getContentId())
-                .orElseThrow(() -> new EntityNotFoundException("콘텐츠가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         Article article = Article.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
@@ -60,7 +60,7 @@ public class ArticleService {
     // 단건 조회
     public ArticleDto getArticle(Long id) {
         return ArticleDto.from(articleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다.")));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND)));
     }
 
     @Transactional(readOnly = true)
@@ -87,18 +87,18 @@ public class ArticleService {
     public ArticleDto updateArticle(Long articleId, ArticleUpdateDto request) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean isOwner = article.getMember().getId().equals(memberId);
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isOwner && !isAdmin) {
-            throw new AccessDeniedException("글 수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_MODIFICATION);
         }
 
         article.update(request.getTitle(), request.getBody(), request.getCategory());
@@ -113,20 +113,20 @@ public class ArticleService {
     public void deleteArticle(Long articleId) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
 
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean isOwner = article.getMember().getId().equals(memberId);
         boolean isAdmin = member.getRoles().stream()
                 .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"));
         if (!isOwner && !isAdmin) {
-            throw new AccessDeniedException("글 삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.UNAUTHORIZED_DELETION);
         }
         articleRepository.delete(article);
     }

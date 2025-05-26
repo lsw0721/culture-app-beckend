@@ -3,13 +3,13 @@ package cultureinfo.culture_app.service;
 import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.ContentFavorite;
 import cultureinfo.culture_app.dto.response.ContentFavoriteDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
 import cultureinfo.culture_app.repository.ContentFavoriteRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +25,14 @@ public class ContentFavoriteService {
     public ContentFavoriteDto toggleFavorite(Long contentDetailId){
         Long memberId = securityUtil.getCurrentId();
         if(memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
 
         //대상 엔티티 조회
         ContentDetail detail = contentDetailRepository.findById(contentDetailId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 콘텐츠입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         //기존 찜 여부 확인
         boolean nowFavorited;

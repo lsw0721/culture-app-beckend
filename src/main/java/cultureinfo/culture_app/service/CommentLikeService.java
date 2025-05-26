@@ -4,13 +4,13 @@ import cultureinfo.culture_app.domain.Comment;
 import cultureinfo.culture_app.domain.CommentLike;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.response.CommentLikeDto;
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.CommentLikeRepository;
 import cultureinfo.culture_app.repository.CommentRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,19 +26,19 @@ public class CommentLikeService {
     public CommentLikeDto toggleLike(Long commentId) {
         Long memberId = securityUtil.getCurrentId();
         if (memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다.");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         boolean liked;
 
         if (commentLikeRepository.existsByCommentIdAndMemberId(commentId, memberId)) {
             CommentLike existing = commentLikeRepository
                     .findByCommentIdAndMemberId(commentId, memberId)
-                    .orElseThrow(() -> new EntityNotFoundException("댓글 좋아요가 존재하지 않습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_LIKE_NOT_FOUND));
             commentLikeRepository.delete(existing);
             comment.decreaseLikeCount();
             liked = false;

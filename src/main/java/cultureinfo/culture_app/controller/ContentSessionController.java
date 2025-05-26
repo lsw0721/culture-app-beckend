@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -27,7 +26,7 @@ public class ContentSessionController {
 
     //세션 생성
     @PostMapping
-    public ResponseEntity<ContentSessionDto> createSession(
+    public ResponseEntity<ContentSessionDto> createSession (
             @PathVariable Long contentId,
             @RequestBody @Valid ContentSessionCreateRequestDto dto
     ) {
