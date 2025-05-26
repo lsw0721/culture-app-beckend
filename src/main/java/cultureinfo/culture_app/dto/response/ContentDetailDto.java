@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -51,5 +52,11 @@ public class ContentDetailDto {
                 .brandName(d.getBrandName())
                 .detailsJson(d.getDetailsJson())
                 .build();
+    }
+
+    public static List<ContentDetailDto> fromList(List<ContentDetail> details, boolean fav) {
+        return details.stream()
+            .map(d -> from(d, fav))  // 기존의 from 메서드를 재사용
+            .collect(Collectors.toList());
     }
 }
