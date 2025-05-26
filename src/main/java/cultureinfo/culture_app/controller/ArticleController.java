@@ -5,7 +5,6 @@ import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.service.ArticleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,16 +23,10 @@ public class ArticleController {
     //게시글 생성
     @PostMapping
     public ResponseEntity<ArticleDto> createArticle(@RequestBody ArticleRequestDto requestDto) {
-        try{
-            ArticleDto created = articleService.createArticle(requestDto);
-            return ResponseEntity
+        ArticleDto created = articleService.createArticle(requestDto);
+        return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(created);
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.status(401).build(); //멤버가 존재하지 않거나 콘텐츠가 존재하지 않을때
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
     }
 
     // 게시글 단건 조회
@@ -69,26 +61,14 @@ public class ArticleController {
     public ResponseEntity<ArticleDto> updateArticle(
             @PathVariable Long id,
             @RequestBody ArticleUpdateDto requestDto) {
-        try{
-            ArticleDto updated = articleService.updateArticle(id, requestDto);
-            return ResponseEntity.ok(updated);
-        } catch(AccessDeniedException e){
-            return ResponseEntity.status(401).build();
-        } catch (Exception e){
-            return ResponseEntity.status(500).build();
-        }
+        ArticleDto updated = articleService.updateArticle(id, requestDto);
+        return ResponseEntity.ok(updated);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteArticle(@PathVariable Long id) {
-        try{
-            articleService.deleteArticle(id);
-            return ResponseEntity.noContent().build();
-        } catch(AccessDeniedException e){
-            return ResponseEntity.status(401).build();
-        } catch (Exception e){
-            return ResponseEntity.status(500).build();
-        }
+        articleService.deleteArticle(id);
+        return ResponseEntity.noContent().build();
     }
 }

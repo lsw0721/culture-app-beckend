@@ -9,6 +9,7 @@ public enum ErrorCode {
     UNAUTHORIZED_MODIFICATION("AUTH_003", HttpStatus.FORBIDDEN, "수정 권한이 없습니다."),
     UNAUTHORIZED_DELETION("AUTH_004", HttpStatus.FORBIDDEN, "삭제 권한이 없습니다."),
 
+
     // 사용자 인증/회원 관련
     EMAIL_ALREADY_EXISTS("USER_001", HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
     EMAIL_NOT_FOUND("USER_002", HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
@@ -18,6 +19,13 @@ public enum ErrorCode {
     INVALID_ID("USER_006", HttpStatus.UNAUTHORIZED, "아이디가 일치하지 않습니다."),
     USERNAME_ALREADY_EXISTS("USER_007", HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     NICKNAME_ALREADY_EXISTS("USER_008", HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
+
+    // 이메일/인증 관련
+    EMAIL_SEND_FAILED("MAIL_001", HttpStatus.BAD_GATEWAY, "이메일 전송에 실패했습니다."),
+    AUTH_CODE_NOT_FOUND("AUTH_010", HttpStatus.BAD_REQUEST, "인증 코드가 존재하지 않거나 만료되었습니다."),
+    AUTH_CODE_MISMATCH("AUTH_011", HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다."),
+    TEMP_PASSWORD_SAVE_FAILED("USER_010", HttpStatus.INTERNAL_SERVER_ERROR, "임시 비밀번호 저장에 실패했습니다."),
+    INQUIRY_SEND_FAILED("MAIL_002", HttpStatus.BAD_GATEWAY, "문의 이메일 전송에 실패했습니다."),
 
     // 파일
     FILE_UPLOAD_FAILED("FILE_001", HttpStatus.BAD_GATEWAY, "파일 업로드 중 오류가 발생했습니다."),
