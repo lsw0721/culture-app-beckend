@@ -1,14 +1,19 @@
 package cultureinfo.culture_app.service;
 
+import cultureinfo.culture_app.exception.CustomException;
+import cultureinfo.culture_app.exception.ErrorCode;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import cultureinfo.culture_app.dto.request.InquiryRequestDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -144,35 +149,55 @@ public class EmailService {
         int authCode = createNumber();
         MimeMessage message = createJoinMail(recipientEmail, authCode);
 
-        // Redis에 인증 코드 저장, 5분 후 만료
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(recipientEmail, String.valueOf(authCode), CODE_EXPIRE_MINUTES, TimeUnit.MINUTES);
+        try {
+            // Redis 저장
+            ValueOperations<String, String> ops = redisTemplate.opsForValue();
+            ops.set(recipientEmail, String.valueOf(authCode), CODE_EXPIRE_MINUTES, TimeUnit.MINUTES);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
 
-        // 이메일 전송
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+        } catch (MailException e) {
+            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
+        }
     }
 
     // 비밀번호 찾기용 이메일 전송
     //아이디 이메일 검증 -> 임시 비밀번호 생성/저장 -> 메일 발송
+    @Transactional
     public void sendTemporaryPassword(String username, String recipientEmail) {
         //이메일 존재 검증
         memberService.validateUsernameAndEmail(username, recipientEmail);
-        //임시 비밀번호
+        // 2) 임시 비밀번호 생성 및 저장
         String tempPassword = createPassword();
-        //db에 임시 비밀번호 저장
-        memberService.saveTemporaryPassword(username, recipientEmail, tempPassword);
-        // 이메일 메시지 작성 & 전송
+        try {
+            memberService.saveTemporaryPassword(username, recipientEmail, tempPassword);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.TEMP_PASSWORD_SAVE_FAILED);
+        }
+
+        // 3) 메일 전송
         MimeMessage message = createPasswordMail(recipientEmail, tempPassword);
-        // 이메일 전송
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+        } catch (MailException e) {
+            throw new CustomException(ErrorCode.EMAIL_SEND_FAILED);
+        }
     }
 
     // 인증 코드 확인
-    public boolean verifyAuthCode(String email, String inputCode) {
+    public void verifyAuthCode(String email, String inputCode) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String storedCode = valueOperations.get(email);
+        String stored = valueOperations.get(email);
 
-        return storedCode != null && storedCode.equals(inputCode);
+        if (stored == null) {
+            throw new CustomException(ErrorCode.AUTH_CODE_NOT_FOUND);
+        }
+        if (!stored.equals(inputCode)) {
+            throw new CustomException(ErrorCode.AUTH_CODE_MISMATCH);
+        }
     }
 
     //문의용 메일 전송 
@@ -181,7 +206,11 @@ public class EmailService {
         String title = request.getTitle();
         String body = request.getBody();
         MimeMessage message = createInquiryMail(senderEmail, title, body,member_email);
-        javaMailSender.send(message);
+        try {
+            javaMailSender.send(message);
+        } catch (MailException e) {
+            throw new CustomException(ErrorCode.INQUIRY_SEND_FAILED);
+        }
 
     }
 }
