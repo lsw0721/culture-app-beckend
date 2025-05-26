@@ -43,7 +43,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
         if (memberRepository.existsByEmail(joinRequestDTO.getNickname())) {
-            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
 
         String encodedPassword = passwordEncoder.encode(joinRequestDTO.getPassword());
