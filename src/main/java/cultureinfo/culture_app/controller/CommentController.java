@@ -22,14 +22,9 @@ public class CommentController {
     public ResponseEntity<CommentDto> createComment(
             @PathVariable Long articleId,
             @RequestBody CommentRequestDto requestDto) {
-        try{
-            CommentDto created = commentService.createComment(articleId, requestDto);
-            return ResponseEntity.ok(created);
-        } catch (EntityNotFoundException e){
-            return ResponseEntity.status(401).build(); //멤버가 존재하지 않거나 콘텐츠가 존재하지 않을때
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
+        CommentDto created = commentService.createComment(articleId, requestDto);
+        return ResponseEntity.ok(created);
+
     }
 
     // 게시글 댓글 전체 조회
@@ -43,26 +38,14 @@ public class CommentController {
     public ResponseEntity<CommentDto> updateComment(
             @PathVariable Long commentId,
             @RequestBody CommentRequestDto requestDto) {
-        try{
-            CommentDto updated = commentService.updateComment(commentId, requestDto);
-            return ResponseEntity.ok(updated);
-        } catch(AccessDeniedException e){
-            return ResponseEntity.status(401).build();
-        } catch (Exception e){
-            return ResponseEntity.status(500).build();
-        }
+        CommentDto updated = commentService.updateComment(commentId, requestDto);
+        return ResponseEntity.ok(updated);
     }
 
     // 댓글 삭제
     @DeleteMapping("/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        try{
-            commentService.deleteComment(commentId);
-            return ResponseEntity.noContent().build();
-        } catch(AccessDeniedException e){
-            return ResponseEntity.status(401).build();
-        } catch (Exception e){
-            return ResponseEntity.status(500).build();
-        }
+        commentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 }
