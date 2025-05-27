@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # MySQL 8용 JDBC 드라이버 클래스
     username: root               # DB 접속용 사용자 이름
-    password: Dnjstnddl12!     # DB 접속용 비밀번호 (보안상 실제 배포 시엔 별도 관리 권장)
+    password: dnjstnddl12!    # DB 접속용 비밀번호 (보안상 실제 배포 시엔 별도 관리 권장)
 
   # jpa
   jpa:
