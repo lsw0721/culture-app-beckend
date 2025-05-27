@@ -13,4 +13,5 @@ public interface ContentFavoriteRepository extends JpaRepository<ContentFavorite
 
     Optional<ContentFavorite> findByMemberIdAndContentDetailId(Long memberId, Long contentDetailId);
     boolean existsByMemberIdAndContentDetailId(Long memberId, Long contentDetailId);
+    List<ContentFavorite> findAllByMemberId(Long memberId);
 }
