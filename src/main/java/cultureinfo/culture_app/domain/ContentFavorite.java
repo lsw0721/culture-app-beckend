@@ -25,10 +25,6 @@ public class ContentFavorite {
     @JoinColumn(name = "content_detail_id")
     private ContentDetail contentDetail;
 
-    @ManyToOne
-    @JoinColumn(name = "content_id")
-    private Content content;
-
     @Builder
     public ContentFavorite(Member member, ContentDetail contentDetail) {
         this.member = member;
