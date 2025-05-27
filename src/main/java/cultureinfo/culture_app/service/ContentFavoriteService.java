@@ -3,6 +3,7 @@ package cultureinfo.culture_app.service;
 import cultureinfo.culture_app.domain.ContentDetail;
 import cultureinfo.culture_app.domain.ContentFavorite;
 import cultureinfo.culture_app.dto.response.ContentFavoriteDto;
+import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import cultureinfo.culture_app.exception.CustomException;
 import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
@@ -12,6 +13,9 @@ import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +66,18 @@ public class ContentFavoriteService {
     @Transactional(readOnly = true)
     public boolean isFavorite(Long memberId,Long contentDetailId){
         return contentFavoriteRepository.existsByMemberIdAndContentDetailId(memberId, contentDetailId);
+    }
+
+    //특정 사용자가 찜한 콘텐츠를 불러오는 기능
+    @Transactional(readOnly = true)
+    public List<ContentDetailDto> isMyFavorite(){
+        Long memberId = securityUtil.getCurrentId();
+        if(memberId == null) {
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
+        }
+        List<ContentDetail> content = contentFavoriteRepository.findAllByMemberId(memberId).stream()
+        .map(fav -> fav.getContentDetail())
+        .collect(Collectors.toList());
+        return ContentDetailDto.fromList(content, true);
     }
 }
