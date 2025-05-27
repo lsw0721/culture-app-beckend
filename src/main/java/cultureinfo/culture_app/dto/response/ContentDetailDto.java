@@ -32,7 +32,7 @@ public class ContentDetailDto {
 
     public static ContentDetailDto from(ContentDetail d, boolean fav) {
         List<ContentSessionDto> sessions = d.getSessions().stream()
-                .map(s -> new ContentSessionDto(s.getId(), s.getSessionDate(), s.getInfoJson()))
+                .map(s -> new ContentSessionDto(s.getId(), s.getSessionDate(), s.getInfoJson(), s.getPicture()))
                 .toList();
 
         return ContentDetailDto.builder()
