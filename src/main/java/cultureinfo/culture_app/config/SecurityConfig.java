@@ -3,6 +3,7 @@ package cultureinfo.culture_app.config;
 import cultureinfo.culture_app.security.CustomUserDetailsService;
 import cultureinfo.culture_app.security.JwtAuthenticationFilter;
 import cultureinfo.culture_app.security.JwtTokenProvider;
+import cultureinfo.culture_app.security.CustomAuthenticationEntryPoint;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,13 +27,16 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration
             , JwtTokenProvider jwtTokenProvider
             , CustomUserDetailsService customUserDetailsService
+            , CustomAuthenticationEntryPoint customAuthenticationEntryPoint
                           ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.customUserDetailsService = customUserDetailsService;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     //AuthenticationManager Bean 등록
@@ -81,6 +85,8 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated()
                 )
+                .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
