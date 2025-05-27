@@ -41,6 +41,11 @@ public enum ErrorCode {
     ARTICLE_LIKE_NOT_FOUND("CONTENT_006", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
     COMMENT_LIKE_NOT_FOUND("CONTENT_007", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
 
+    //토큰 관련
+    EXPIRED_JWT_EXCEPTION("TOKEN_001", HttpStatus.FORBIDDEN, "토큰이 만료되었습니다."),
+    RUNTIME_EXCEPTION("TOKEN_002", HttpStatus.UNAUTHORIZED, "REFRESH TOKEN이 유효하지 않습니다."),
+
+    
     // 공통
     INTERNAL_SERVER_ERROR("COMMON_999", HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다.");
 
