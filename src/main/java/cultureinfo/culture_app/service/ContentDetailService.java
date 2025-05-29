@@ -1,7 +1,7 @@
 package cultureinfo.culture_app.service;
 
 import cultureinfo.culture_app.domain.ContentDetail;
-import cultureinfo.culture_app.domain.ContentSmallCategory;
+import cultureinfo.culture_app.domain.ContentSubcategory;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ContentDetailCreateRequestDto;
 import cultureinfo.culture_app.dto.request.ContentDetailUpdateRequestDto;
@@ -11,7 +11,7 @@ import cultureinfo.culture_app.dto.response.ContentSummaryDto;
 import cultureinfo.culture_app.exception.CustomException;
 import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
-import cultureinfo.culture_app.repository.ContentSmallCategoryRepository;
+import cultureinfo.culture_app.repository.ContentSubcategoryRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ContentDetailService {
     private final ContentDetailRepository contentDetailRepository;
-    private final ContentSmallCategoryRepository contentSmallCategoryRepository;
+    private final ContentSubcategoryRepository contentSubcategoryRepository;
     private final SecurityUtil securityUtil;
     private final ContentFavoriteService contentFavoriteService;
     private final MemberRepository memberRepository;
@@ -49,9 +49,9 @@ public class ContentDetailService {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
-        // 2) 소분류(Category) 조회
-        ContentSmallCategory smallCat = contentSmallCategoryRepository
-                .findById(req.getContentSmallCategoryId())
+        // 2) 중분류(Category) 조회
+        ContentSubcategory smallCat = contentSubcategoryRepository
+                .findById(req.getContentSubcategoryId())
                 .orElseThrow(() -> new CustomException(ErrorCode.SMALL_CATEGORY_NOT_FOUND));
 
         // 3) 엔티티 빌드
@@ -66,7 +66,7 @@ public class ContentDetailService {
                 .sportTeamName(req.getSportTeamName())
                 .brandName(req.getBrandName())
                 .detailsJson(req.getDetailsJson())
-                .contentSmallCategory(smallCat)
+                .contentSubcategory(smallCat)
                 .build();
 
         // 4) 저장
@@ -92,7 +92,7 @@ public class ContentDetailService {
     public Slice<ContentSummaryDto> search(ContentSearchRequestDto req){
         Long memberId = securityUtil.getCurrentId();
         return contentDetailRepository.searchContentDetails(
-                req.getSmallCategoryId(),
+                req.getSubcategoryId(),
                 req.getKeyword(),
                 req.getArtistName(),
                 req.getSportTeamName(),
