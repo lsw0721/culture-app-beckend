@@ -12,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 //보류
 public class ContentSearchRequestDto {
-    private Long categoryId;    // 대분류(또는 중분류·소분류) ID
-    private Long subCategoryId; // 중분류
+    //이 정보만 필요
     private Long smallCategoryId; // 소분류
+
     private String keyword;     // 콘텐츠 이름 검색
     private String artistName; // 가수명 검색 키워드
     private String sportTeamName;   // 스포츠 팀명 검색 키워드
@@ -25,4 +25,6 @@ public class ContentSearchRequestDto {
     private int   page = 0;         // 0부터 시작
     @Min(1)
     private int   size = 20;         // 페이지 크기
+
+
 }

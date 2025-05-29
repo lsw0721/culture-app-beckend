@@ -92,8 +92,6 @@ public class ContentDetailService {
     public Slice<ContentSummaryDto> search(ContentSearchRequestDto req){
         Long memberId = securityUtil.getCurrentId();
         return contentDetailRepository.searchContentDetails(
-                req.getCategoryId(),
-                req.getSubCategoryId(),
                 req.getSmallCategoryId(),
                 req.getKeyword(),
                 req.getArtistName(),
@@ -117,6 +115,7 @@ public class ContentDetailService {
         boolean isFavorited = contentFavoriteService.isFavorite(memberId,contentDetailId); // 어떻게 처리할지 생각 필요
         return ContentDetailDto.from(contentDetail, isFavorited);
     }
+
 
     //콘텐츠 상세 수정 - 관리자만 수정 가능
     @Transactional

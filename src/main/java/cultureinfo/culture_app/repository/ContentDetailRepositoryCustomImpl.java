@@ -24,8 +24,6 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
 
     @Override
     public Slice<ContentSummaryDto> searchContentDetails(
-            Long categoryId,
-            Long subcategoryId,
             Long smallCategoryId,
             String keyword,
             String artistName,
@@ -42,32 +40,12 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
         //타입 안전
         //연관관계 자동 조인
 
-        //필터링 - 대분류
-        if(categoryId != null) {
-            builder.and(contentDetail
-                    .contentSmallCategory
-                    .contentSubcategory
-                    .contentCategory
-                    .id.eq(categoryId));
-        }
+        //필터링 부분 삭제
 
-        //필터링 - 중분류
-        if(subcategoryId != null) {
-            builder.and(contentDetail
-                    .contentSmallCategory
-                    .contentSubcategory
-                    .id.eq(subcategoryId));
-        }
-
-        //필터링 소분류
-        if(smallCategoryId != null) {
-            builder.and(contentDetail
-                    .contentSmallCategory
-                    .id.eq(smallCategoryId));
-        }
-
-        //필터링 - 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
+        // 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
         if (keyword!=null&&!keyword.isBlank()) builder.and(contentDetail.contentName.containsIgnoreCase(keyword));
+
+        // 중분류 키워드 기반 검색 ex) '가수이름' 검색 시 그 가수가 포함된 콘텐츠 모두 검색됨
         if (artistName!=null&&!artistName.isBlank()) builder.and(contentDetail.artistName.containsIgnoreCase(artistName));
         if (sportTeamName!=null&&!sportTeamName.isBlank()) builder.and(contentDetail.sportTeamName.containsIgnoreCase(sportTeamName));
         if (brandName!=null&&!brandName.isBlank()) builder.and(contentDetail.brandName.containsIgnoreCase(brandName));
