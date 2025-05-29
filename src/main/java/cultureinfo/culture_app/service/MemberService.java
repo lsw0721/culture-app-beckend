@@ -191,4 +191,12 @@ public class MemberService {
         return member.getEmail();
     }
 
+    //아이디 중복 검증
+    public void verifyUsername(String username){
+        if (memberRepository.existsByUsername(username)) {
+            throw new CustomException(ErrorCode.USERNAME_ALREADY_EXISTS);
+        }
+
+    }
+
 }
