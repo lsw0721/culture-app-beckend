@@ -54,6 +54,13 @@ MemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(username); //201
     }
 
+    //아이디 중복 검증
+    @PostMapping("/join/verify-username")
+    public ResponseEntity<Void> verifyUsername(@Valid @RequestBody JoinUsernameRequestDto username){
+        memberService.verifyUsername(username.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
     //키워드 저장
     //400 에러는 형식에 맞지 않거나, null 값을 받았을 때, 그럴 때 발생
     @PatchMapping("/keywords")
