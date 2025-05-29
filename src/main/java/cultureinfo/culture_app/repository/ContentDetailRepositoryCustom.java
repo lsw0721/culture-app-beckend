@@ -6,8 +6,6 @@ import org.springframework.data.domain.Slice;
 
 public interface ContentDetailRepositoryCustom {
     Slice<ContentSummaryDto> searchContentDetails(
-            Long categoryId,
-            Long subCategoryId,
             Long smallCategoryId,
             String keyword,
             String artistName,
