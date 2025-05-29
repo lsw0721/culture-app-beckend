@@ -27,5 +27,5 @@ public class ContentSubcategory {
     private ContentCategory contentCategory;
 
     @OneToMany(mappedBy = "contentSubcategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentSmallCategory> smallCategories = new ArrayList<>();
+    private List<ContentDetail> details = new ArrayList<>();
 }
