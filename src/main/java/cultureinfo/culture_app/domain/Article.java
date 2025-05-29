@@ -32,16 +32,17 @@ public class Article extends BaseEntity {
     private final List<ArticleLike> articleLikes = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "content_id")
-    private ContentDetail contentDetail;
+    @JoinColumn(name = "content_sub_category_id")
+    private ContentSubCategory subCategory;
 
     @Builder
-    public Article(String title, String body, ArticleCategory category, Member member, ContentDetail contentDetail, LocalDateTime createDate, String createBy) {
+    public Article(String title, String body, ArticleCategory category, Member member,
+                   ContentSubCategory subCategory, LocalDateTime createDate, String createBy) {
         this.title = title;
         this.body = body;
         this.category = category;
         this.member = member;
-        this.contentDetail = contentDetail;
+        this.subCategory = subCategory; // 콘텐츠 중분류와 연결
         this.createDate = createDate;
         this.createBy = createBy;
     }

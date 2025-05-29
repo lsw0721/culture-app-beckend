@@ -14,8 +14,9 @@ public class ArticleSummaryDto {
     private Long id;
     private String title;
     private String previewBody;
-    private Long CommentCount;
+    private Long commentCount;
     private LocalDateTime createDate;
+    private Long subCategoryId;
 
     public static ArticleSummaryDto from(Article article) {
         return ArticleSummaryDto.builder()
@@ -23,8 +24,9 @@ public class ArticleSummaryDto {
                 .title(article.getTitle())
                 //목록에서는 본문의 내용 20자 이하로 출력
                 .previewBody(article.getBody().length() > 20 ? article.getBody().substring(0, 20) + "..." : article.getBody())
-                .CommentCount(article.getCommentCount())
+                .commentCount(article.getCommentCount())
                 .createDate(article.getCreateDate())
+                .subCategoryId(article.getSubCategory().getId())
                 .build();
     }
 }

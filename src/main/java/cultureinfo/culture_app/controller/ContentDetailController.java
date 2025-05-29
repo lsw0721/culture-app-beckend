@@ -26,7 +26,6 @@ public class ContentDetailController {
     private final ContentDetailService contentDetailService;
 
     // 목록 조회: 대분류(main), 중분류(sub), 소분류(small) 모두 옵션으로 받아 필터링
-    // GET /api/contents?mainCategoryId=&subcategoryId=&smallCategoryId=&keyword=&...
 
     @GetMapping
     public Slice<ContentSummaryDto> search(@Valid ContentSearchRequestDto req) {
@@ -69,8 +68,6 @@ public class ContentDetailController {
                 .build();
         return contentDetailService.listBySubCategory(req);
     }
-
-
 
     // 단일 콘텐츠 상세 조회 (로그인 필요)
      // GET /api/contents/{id}
