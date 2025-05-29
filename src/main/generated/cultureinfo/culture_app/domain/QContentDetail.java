@@ -30,7 +30,7 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public final StringPath contentName = createString("contentName");
 
-    public final QContentSmallCategory contentSmallCategory;
+    public final QContentSubCategory contentSubcategory;
 
     public final StringPath detailsJson = createString("detailsJson");
 
@@ -70,7 +70,7 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public QContentDetail(Class<? extends ContentDetail> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.contentSmallCategory = inits.isInitialized("contentSmallCategory") ? new QContentSmallCategory(forProperty("contentSmallCategory"), inits.get("contentSmallCategory")) : null;
+        this.contentSubcategory = inits.isInitialized("contentSubcategory") ? new QContentSubCategory(forProperty("contentSubcategory"), inits.get("contentSubcategory")) : null;
     }
 
 }

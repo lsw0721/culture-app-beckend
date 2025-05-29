@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ContentDetailCreateRequestDto {
     @NotNull
-    private Long contentSmallCategoryId;
+    private Long contentSubcategoryId;
 
     @NotBlank
     private String contentName;

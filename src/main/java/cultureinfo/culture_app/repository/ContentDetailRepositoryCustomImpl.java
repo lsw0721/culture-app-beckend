@@ -21,10 +21,11 @@ import java.util.Set;
 public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositoryCustom {
     private final JPAQueryFactory queryFactory;
     private final ContentFavoriteRepository contentFavoriteRepository;
+    QContentDetail contentDetail = QContentDetail.contentDetail;
 
     @Override
     public Slice<ContentSummaryDto> searchContentDetails(
-            Long smallCategoryId,
+            Long subCategoryId,
             String keyword,
             String artistName,
             String sportTeamName,
@@ -33,14 +34,11 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
             Pageable pageable,
             Long memberId
     ) {
-        QContentDetail contentDetail = QContentDetail.contentDetail;
         BooleanBuilder builder = new BooleanBuilder();
 
         //ContentDetail -> 소분류 -> 중분류 -> 대분류의 id가 categoryId와 일치하는 콘텐츠만 검색
         //타입 안전
         //연관관계 자동 조인
-
-        //필터링 부분 삭제
 
         // 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
         if (keyword!=null&&!keyword.isBlank()) builder.and(contentDetail.contentName.containsIgnoreCase(keyword));
@@ -50,7 +48,24 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
         if (sportTeamName!=null&&!sportTeamName.isBlank()) builder.and(contentDetail.sportTeamName.containsIgnoreCase(sportTeamName));
         if (brandName!=null&&!brandName.isBlank()) builder.and(contentDetail.brandName.containsIgnoreCase(brandName));
 
+        return fetchSlice(builder, sortBy, pageable, memberId);
+    }
+
+    //리스트별 조회
+    @Override
+    public Slice<ContentSummaryDto> findBySubCategory(
+            Long subCategoryId, String sortBy, Pageable pageable, Long memberId
+    ){
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(contentDetail.contentSubcategory.id.eq(subCategoryId));
+        return fetchSlice(builder, sortBy, pageable, memberId);
+    }
+
+    private Slice<ContentSummaryDto> fetchSlice(
+            BooleanBuilder builder, String sortBy, Pageable pageable, Long memberId
+    ){
         //정렬 기준 설정
+        //프론트에선 디폴트 값으로 변경할 때는 sortBy 파라미터를 제거하는 식으로 변경
         OrderSpecifier<?> orderSpecifier = switch (sortBy){
             case "favoriteCount" -> contentDetail.favoriteCount.desc(); // 좋아요 내림차순
             case "startDateTime" -> contentDetail.startDateTime.asc(); // 시작일순 오름차순
@@ -87,8 +102,10 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
         List<ContentSummaryDto> result = contents.stream()
                 .map(c -> ContentSummaryDto.of(c))
                 .toList();
-
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
+
+
 }
+

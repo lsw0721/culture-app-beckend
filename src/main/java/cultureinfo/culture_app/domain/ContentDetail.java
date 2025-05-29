@@ -53,8 +53,8 @@ public class ContentDetail {
     private Long favoriteCount = 0L; // 찜 개수(필수)
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "content_small_category_id")
-    private ContentSmallCategory contentSmallCategory;
+    @JoinColumn(name = "content_sub_category_id")
+    private ContentSubCategory contentSubcategory;
 
     //콘텐츠 찜
     @OneToMany(mappedBy = "contentDetail", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -144,7 +144,7 @@ public class ContentDetail {
                          String sportTeamName,
                          String brandName,
                          String detailsJson,
-                         ContentSmallCategory contentSmallCategory) {
+                         ContentSubCategory contentSubcategory) {
         this.contentName = contentName;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -155,7 +155,7 @@ public class ContentDetail {
         this.sportTeamName = sportTeamName;
         this.brandName = brandName;
         this.detailsJson = detailsJson;
-        this.contentSmallCategory = contentSmallCategory;
+        this.contentSubcategory = contentSubcategory;
         this.favoriteCount = 0L;
     }
 

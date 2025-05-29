@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 //콘텐츠 중분류
-public class ContentSubcategory {
+public class ContentSubCategory {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,5 +27,5 @@ public class ContentSubcategory {
     private ContentCategory contentCategory;
 
     @OneToMany(mappedBy = "contentSubcategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentSmallCategory> smallCategories = new ArrayList<>();
+    private List<ContentDetail> details = new ArrayList<>();
 }

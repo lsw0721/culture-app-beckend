@@ -23,6 +23,6 @@ public class ContentCategory {
     private String name; // 대분류 이름
 
     @OneToMany(mappedBy = "contentCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContentSubcategory> subcategories = new ArrayList<>();
+    private List<ContentSubCategory> subcategories = new ArrayList<>();
 }
 

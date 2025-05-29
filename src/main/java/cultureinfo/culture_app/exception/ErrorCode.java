@@ -35,7 +35,7 @@ public enum ErrorCode {
     ENTITY_NOT_FOUND("COMMON_001", HttpStatus.NOT_FOUND, "해당 데이터를 찾을 수 없습니다."),
     CONTENT_NOT_FOUND("CONTENT_001", HttpStatus.NOT_FOUND, "존재하지 않는 콘텐츠입니다."),
     SESSION_NOT_FOUND("CONTENT_002", HttpStatus.NOT_FOUND, "존재하지 않는 세션입니다."),
-    SMALL_CATEGORY_NOT_FOUND("CONTENT_003", HttpStatus.NOT_FOUND, "존재하지 않는 소분류입니다."),
+    CATEGORY_NOT_FOUND("CONTENT_003", HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다."),
     ARTICLE_NOT_FOUND("CONTENT_004", HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."),
     COMMENT_NOT_FOUND("CONTENT_005", HttpStatus.NOT_FOUND, "댓글이 존재하지 않습니다."),
     ARTICLE_LIKE_NOT_FOUND("CONTENT_006", HttpStatus.NOT_FOUND, "게시글 좋아요가 존재하지 않습니다."),
