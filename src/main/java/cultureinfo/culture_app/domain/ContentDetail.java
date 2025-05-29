@@ -54,7 +54,7 @@ public class ContentDetail {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "content_sub_category_id")
-    private ContentSubcategory contentSubcategory;
+    private ContentSubCategory contentSubcategory;
 
     //콘텐츠 찜
     @OneToMany(mappedBy = "contentDetail", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -144,7 +144,7 @@ public class ContentDetail {
                          String sportTeamName,
                          String brandName,
                          String detailsJson,
-                         ContentSubcategory contentSubcategory) {
+                         ContentSubCategory contentSubcategory) {
         this.contentName = contentName;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
