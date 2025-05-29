@@ -1,33 +1,43 @@
 package cultureinfo.culture_app.service;
 
+import cultureinfo.culture_app.domain.ContentCategory;
 import cultureinfo.culture_app.domain.ContentDetail;
-import cultureinfo.culture_app.domain.ContentSubcategory;
+import cultureinfo.culture_app.domain.ContentSubCategory;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ContentDetailCreateRequestDto;
 import cultureinfo.culture_app.dto.request.ContentDetailUpdateRequestDto;
+import cultureinfo.culture_app.dto.request.ContentListRequestDto;
 import cultureinfo.culture_app.dto.request.ContentSearchRequestDto;
+import cultureinfo.culture_app.dto.response.ContentCategoryDto;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
 import cultureinfo.culture_app.dto.response.ContentSummaryDto;
+import cultureinfo.culture_app.dto.response.SubCategoryDto;
 import cultureinfo.culture_app.exception.CustomException;
 import cultureinfo.culture_app.exception.ErrorCode;
+import cultureinfo.culture_app.repository.ContentCategoryRepository;
 import cultureinfo.culture_app.repository.ContentDetailRepository;
-import cultureinfo.culture_app.repository.ContentSubcategoryRepository;
+import cultureinfo.culture_app.repository.ContentSubCategoryRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ContentDetailService {
     private final ContentDetailRepository contentDetailRepository;
-    private final ContentSubcategoryRepository contentSubcategoryRepository;
+    private final ContentSubCategoryRepository contentSubcategoryRepository;
+    private final ContentCategoryRepository contentCategoryRepository;
     private final SecurityUtil securityUtil;
     private final ContentFavoriteService contentFavoriteService;
     private final MemberRepository memberRepository;
@@ -49,10 +59,10 @@ public class ContentDetailService {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
-        // 2) 중분류(Category) 조회
-        ContentSubcategory smallCat = contentSubcategoryRepository
+        // 2) 중분류(Category) 검증
+        ContentSubCategory smallCat = contentSubcategoryRepository
                 .findById(req.getContentSubcategoryId())
-                .orElseThrow(() -> new CustomException(ErrorCode.SMALL_CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 3) 엔티티 빌드
         ContentDetail entity = ContentDetail.builder()
@@ -87,35 +97,19 @@ public class ContentDetailService {
 
     }
 
-    @Transactional(readOnly = true)
-    //페이지 단위 콘텐츠 리스트 조회(필터, 검색, 정렬, 페이징, 찜 여부 포함)
-    public Slice<ContentSummaryDto> search(ContentSearchRequestDto req){
-        Long memberId = securityUtil.getCurrentId();
-        return contentDetailRepository.searchContentDetails(
-                req.getSubcategoryId(),
-                req.getKeyword(),
-                req.getArtistName(),
-                req.getSportTeamName(),
-                req.getBrandName(),
-                req.getSortBy(),
-                PageRequest.of(req.getPage(), req.getSize()), // 몇 번째 페이지에서 몇 개의 콘텐츠를 가져올지
-                memberId);
-    }
-
     //단일 콘텐츠 상세 조회
     @Transactional(readOnly = true)
     public ContentDetailDto getContentDetail(Long contentDetailId) {
         Long memberId = securityUtil.getCurrentId();
         if(memberId == null) {
-            throw new AccessDeniedException("로그인이 필요합니다");
+            throw new CustomException(ErrorCode.LOGIN_REQUIRED);
         }
 
         ContentDetail contentDetail = contentDetailRepository.findById(contentDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         boolean isFavorited = contentFavoriteService.isFavorite(memberId,contentDetailId); // 어떻게 처리할지 생각 필요
         return ContentDetailDto.from(contentDetail, isFavorited);
     }
-
 
     //콘텐츠 상세 수정 - 관리자만 수정 가능
     @Transactional
@@ -137,7 +131,7 @@ public class ContentDetailService {
             throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
         ContentDetail entity = contentDetailRepository.findById(contentDetailId)
-                .orElseThrow(() -> new CustomException(ErrorCode.SMALL_CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
         //이미지 수정
         MultipartFile imageFile = dto.getPictureFile();
@@ -193,4 +187,63 @@ public class ContentDetailService {
         contentDetailRepository.deleteById(contentDetailId);
     }
 
+    //탐색 페이지
+
+    //1. 키워드 기반 검색
+    @Transactional(readOnly = true)
+    //페이지 단위 콘텐츠 리스트 조회(필터, 검색, 정렬, 페이징, 찜 여부 포함)
+    public Slice<ContentSummaryDto> searchByKeyword(ContentSearchRequestDto req){
+        Long memberId = securityUtil.getCurrentId();
+        return contentDetailRepository.searchContentDetails(
+                req.getSubCategoryId(),
+                req.getKeyword(),
+                req.getArtistName(),
+                req.getSportTeamName(),
+                req.getBrandName(),
+                req.getSortBy(),
+                PageRequest.of(req.getPage(), req.getSize()), // 몇 번째 페이지에서 몇 개의 콘텐츠를 가져올지
+                memberId);
+    }
+    
+    
+    //2. 카테고리별 리스트업
+    //대분류 조회
+    @Transactional(readOnly = true)
+    public List<ContentCategoryDto> getAllContentCategories() {
+        return contentCategoryRepository.findAll().stream()
+                .map(ContentCategoryDto::from)
+                .collect(Collectors.toList());
+    }
+
+    //특정 대분류의 중분류 조회
+    @Transactional(readOnly = true)
+    public List<SubCategoryDto> getAllSubCategories(Long categoryId) {
+        ContentCategory large = contentCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+        return large.getSubcategories().stream()
+                .map(SubCategoryDto::from)
+                .collect(Collectors.toList());
+    }
+    
+    //특정 중분류에 속해 있는 콘텐츠 리스트업
+    @Transactional(readOnly = true)
+    public Slice<ContentSummaryDto> listBySubCategory(
+           ContentListRequestDto req) {
+        Long memberId = securityUtil.getCurrentId();
+        Pageable pg = PageRequest.of(
+                req.getPage(),
+                req.getSize(),
+                Sort.by(req.getSortBy())
+        );
+        return contentDetailRepository.searchContentDetails(
+                req.getSubCategoryId(),  // 중분류 ID로만 필터
+                null,                    // 콘텐츠 이름 키워드 없음
+                null,                    // 가수명 검색 없음
+                null,                    // 스포츠 팀명 검색 없음
+                null,
+                req.getSortBy(),         // 정렬 기준
+                pg,
+                memberId
+        );
+    }
 }
