@@ -54,6 +54,7 @@ public class MemberService {
                 .password(encodedPassword)
                 .email(joinRequestDTO.getEmail())
                 .location(joinRequestDTO.getLocation())
+                .age(joinRequestDTO.getAge())
                 .gender(joinRequestDTO.getGender())
                 .nickname(joinRequestDTO.getNickname())
                 .roles(Set.of(Role.ROLE_USER))
@@ -165,7 +166,7 @@ public class MemberService {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        member.update(req.getName(), req.getNickname(), req.getLocation(), req.getGender(), req.getEmail());
+        member.update(req.getName(), req.getNickname(), req.getLocation(), req.getGender(), req.getEmail(), req.getAge());
         return MemberDto.from(member);
     }
 

@@ -23,4 +23,6 @@ public class MemberProfileEditRequestDto {
     private String location;
     @NotBlank
     private String nickname;
+    @NotBlank
+    private Long age;
 }
