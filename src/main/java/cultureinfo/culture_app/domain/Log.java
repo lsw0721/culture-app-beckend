@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+
+//삭제 필요..?
 public class Log {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

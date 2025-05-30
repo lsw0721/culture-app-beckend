@@ -1,7 +1,6 @@
 package cultureinfo.culture_app.service;
-
 import cultureinfo.culture_app.domain.Article;
-import cultureinfo.culture_app.domain.ContentDetail;
+import cultureinfo.culture_app.domain.ContentSubCategory;
 import cultureinfo.culture_app.domain.Member;
 import cultureinfo.culture_app.dto.request.ArticleRequestDto;
 import cultureinfo.culture_app.dto.request.ArticleUpdateDto;
@@ -10,7 +9,7 @@ import cultureinfo.culture_app.dto.response.ArticleSummaryDto;
 import cultureinfo.culture_app.exception.CustomException;
 import cultureinfo.culture_app.exception.ErrorCode;
 import cultureinfo.culture_app.repository.ArticleRepository;
-import cultureinfo.culture_app.repository.ContentDetailRepository;
+import cultureinfo.culture_app.repository.ContentSubCategoryRepository;
 import cultureinfo.culture_app.repository.MemberRepository;
 import cultureinfo.culture_app.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,7 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
-    private final ContentDetailRepository contentDetailRepository;
+    private final ContentSubCategoryRepository subCategoryRepository;
     private final SecurityUtil securityUtil;
 
     //게시글 작성: 로그인한 사용자만 가능
@@ -41,14 +40,15 @@ public class ArticleService {
         }
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        ContentDetail contentDetail = contentDetailRepository.findById(request.getContentId())
-                .orElseThrow(() -> new CustomException(ErrorCode.ARTICLE_NOT_FOUND));
+
+        ContentSubCategory subCategory = subCategoryRepository.findById(request.getSubCategoryId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         Article article = Article.builder()
                 .title(request.getTitle())
                 .body(request.getBody())
                 .category(request.getCategory())
                 .member(member)
-                .contentDetail(contentDetail)
+                .subCategory(subCategory)
                 .createBy(member.getUsername())
                 .createDate(LocalDateTime.now())
                 .build();
