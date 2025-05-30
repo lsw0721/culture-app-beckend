@@ -22,6 +22,7 @@ public class Member {
     private String name; // 실제 이름
     private String email; //이메일
     private String location; // 사용자 주소
+    private Long age; // 나이
 
     @Enumerated(EnumType.STRING)
     private Gender gender; // 성별
@@ -59,7 +60,7 @@ public class Member {
     private final List<CommentLike> commentLikes = new ArrayList<>();
 
     @Builder
-    public Member(String username, String password, String name, String email, String location, Gender gender, String nickname, Set<Role> roles) {
+    public Member(String username, String password, String name, String email, String location, Gender gender, String nickname, Long age, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -67,15 +68,17 @@ public class Member {
         this.location = location;
         this.gender = gender;
         this.nickname = nickname;
+        this.age= age;
         this.roles = roles;
     }
 
-    public void update(String name, String nickname, String location, Gender gender, String email) {
+    public void update(String name, String nickname, String location, Gender gender, String email, Long age) {
         this.name = name;
         this.nickname = nickname;
         this.location = location;
         this.gender = gender;
         this.email = email;
+        this.age = age;
     }
 
     //키워드 변경
