@@ -12,6 +12,7 @@ public class MemberDto {
     private final String name;
     private final String email;
     private final String location;
+    private final Long age;
     private final String gender;
     private final String nickname;
 
@@ -22,6 +23,7 @@ public class MemberDto {
                 .name(member.getName())
                 .email(member.getEmail())
                 .location(member.getLocation())
+                .age(member.getAge())
                 .gender(member.getGender().name())
                 .nickname(member.getNickname())
                 .build();
