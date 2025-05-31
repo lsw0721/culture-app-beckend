@@ -39,24 +39,6 @@ public class ContentDetail {
     @Column(nullable = true)
     private String picture; // 콘텐츠 사진 - URL 경로 설계 등 필요(옵션)
 
-    /*
-    @Column(nullable = true)
-    private String artistName; // 가수(그룹)명(옵션)
-
-    @Column(nullable = true)
-    private String sportTeamName;
-
-    @Column(nullable = true)// 스포츠 팀명(옵션)
-    private String brandName; // 브랜드 명(옵션)
-
-    @Lob
-    @Column(nullable = true)
-    private String detailsJson; // 각 컨테츠 별로 바뀌거나 조회가 필요 없는 세부내용 Json(옵션)
-    */
-
-    @Column(nullable = true)
-    private String subjectName; // 출연진(옵션)
-
     @Column(nullable = true)
     private String subject; // 주제, 줄거리(옵션)
 
@@ -77,6 +59,40 @@ public class ContentDetail {
     //일별 콘텐츠 상세
     @OneToMany(mappedBy = "contentDetail", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContentSession> sessions = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "content_detail_subjects",
+            joinColumns = @JoinColumn(name = "content_detail_id")
+    )
+    @Column(nullable = false)
+    private List<String> subjectNames = new ArrayList<>();
+
+    @Builder
+    public ContentDetail(String contentName,
+                         LocalDateTime startDateTime,
+                         LocalDateTime endDateTime,
+                         String location,
+                         String address,
+                         String price,
+                         String picture,
+                         List<String> subjectNames,
+                         String subject,
+                         String link,
+                         ContentSubCategory contentSubcategory) {
+        this.contentName = contentName;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.location = location;
+        this.address = address;
+        this.price = price;
+        this.picture = picture;
+        this.subjectNames = subjectNames != null ? subjectNames : new ArrayList<>();
+        this.subject = subject;
+        this.link = link;
+        this.contentSubcategory = contentSubcategory;
+        this.favoriteCount = 0L;
+    }
 
     //찜 개수 증가
     public void increaseFavoriteCount() { // 찜 개수 증가
@@ -120,65 +136,20 @@ public class ContentDetail {
                 .filter(url -> !url.isBlank())
                 .ifPresent(url -> this.picture = url);
     }
-    /*
-    //아티스트 명 변경
-    public void changeArtistName(String artist) {
-        Optional.ofNullable(artist)
-                .filter(a -> !a.isBlank())
-                .ifPresent(a -> this.artistName = a);
+
+    // ↓↓↓ 이 부분도 List<String>을 그대로 덮어쓰도록 수정했습니다 ↓↓↓
+    public void changeSubjectNames(List<String> subjectNames) {
+        this.subjectNames = subjectNames != null ? subjectNames : new ArrayList<>();
     }
 
-    //스포츠 팀 명 변경
-    public void changeSportTeamName(String team) {
-        Optional.ofNullable(team)
-                .filter(t -> !t.isBlank())
-                .ifPresent(t -> this.sportTeamName = t);
-    }
-
-    //브랜드 명 변경
-    public void changeBrandName(String brand) {
-        Optional.ofNullable(brand)
-                .filter(b -> !b.isBlank())
-                .ifPresent(b -> this.brandName = b);
-    }
-
-    // 상세 JSON 변경 (옵션)
-    public void changeDetailsJson(String json) {
-        Optional.ofNullable(json)
-                .ifPresent(j -> this.detailsJson = j);
-    }
-    */
-
-    @Builder
-    public ContentDetail(String contentName,
-                         LocalDateTime startDateTime,
-                         LocalDateTime endDateTime,
-                         String location,
-                         String address,
-                         String price,
-                         String picture,
-                         String subjectName,
-                         String subject,
-                         String link,
-                         ContentSubCategory contentSubcategory) {
-        this.contentName = contentName;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.location = location;
-        this.address = address;
-        this.price = price;
-        this.picture = picture;
-        /*
-        this.artistName = artistName;
-        this.sportTeamName = sportTeamName;
-        this.brandName = brandName;
-        this.detailsJson = detailsJson;
-        */
-        this.subjectName = subjectName;
+    // 설명(주제) 변경
+    public void changeSubject(String subject) {
         this.subject = subject;
+    }
+
+    // 링크 변경
+    public void changeLink(String link) {
         this.link = link;
-        this.contentSubcategory = contentSubcategory;
-        this.favoriteCount = 0L;
     }
 
 }

@@ -9,12 +9,6 @@ public interface ContentDetailRepositoryCustom {
     Slice<ContentSummaryDto> searchContentDetails(
             Long subCategoryId,
             String keyword,
-            /*
-            String artistName,
-            String sportTeamName,
-            String brandName,
-
-             */
             String subjectName,
             String sortBy,
             Pageable pageable,
