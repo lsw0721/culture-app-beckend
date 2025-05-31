@@ -70,12 +70,18 @@ public class ContentDetailService {
                 .startDateTime(req.getStartDateTime())
                 .endDateTime(req.getEndDateTime())
                 .location(req.getLocation())
-                .price(Optional.ofNullable(req.getPrice()).orElse(0L))
+                .address(req.getAddress())
+                .price(req.getPrice())
                 .picture(null)
+                /*
                 .artistName(req.getArtistName())
                 .sportTeamName(req.getSportTeamName())
                 .brandName(req.getBrandName())
                 .detailsJson(req.getDetailsJson())
+                */
+                .subjectName(req.getSubjectName())
+                .subject(req.getSubject())
+                .link(req.getLink())
                 .contentSubcategory(smallCat)
                 .build();
 
@@ -148,7 +154,7 @@ public class ContentDetailService {
             entity.changePeriod(dto.getStartDateTime(), dto.getEndDateTime());
         if (dto.getLocation() != null)
             entity.changeLocation(dto.getLocation());
-
+        /*
         if (dto.getArtistName() != null)
             entity.changeArtistName(dto.getArtistName());
         if (dto.getSportTeamName() != null)
@@ -157,7 +163,7 @@ public class ContentDetailService {
             entity.changeBrandName(dto.getBrandName());
         if (dto.getDetailsJson() != null)
             entity.changeDetailsJson(dto.getDetailsJson());
-
+        */
         // 변경된 엔티티를 다시 DTO로 변환해 반환
         boolean fav = contentFavoriteService.isFavorite(securityUtil.getCurrentId(), contentDetailId);
         return ContentDetailDto.from(entity, fav);
@@ -197,9 +203,12 @@ public class ContentDetailService {
         return contentDetailRepository.searchContentDetails(
                 req.getSubCategoryId(),
                 req.getKeyword(),
+                /*
                 req.getArtistName(),
                 req.getSportTeamName(),
                 req.getBrandName(),
+                */
+                req.getSubjectName(),
                 req.getSortBy(),
                 PageRequest.of(req.getPage(), req.getSize()), // 몇 번째 페이지에서 몇 개의 콘텐츠를 가져올지
                 memberId);
@@ -237,8 +246,8 @@ public class ContentDetailService {
         );
         return contentDetailRepository.searchContentDetails(
                 req.getSubCategoryId(),  // 중분류 ID로만 필터
-                null,                    // 콘텐츠 이름 키워드 없음
-                null,                    // 가수명 검색 없음
+                //null,                    // 콘텐츠 이름 키워드 없음
+                //null,                    // 가수명 검색 없음
                 null,                    // 스포츠 팀명 검색 없음
                 null,
                 req.getSortBy(),         // 정렬 기준

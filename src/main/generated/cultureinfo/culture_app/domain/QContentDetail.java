@@ -22,6 +22,8 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public static final QContentDetail contentDetail = new QContentDetail("contentDetail");
 
+    public final StringPath subjectName = createString("subjectName");
+
     public final StringPath artistName = createString("artistName");
 
     public final StringPath brandName = createString("brandName");

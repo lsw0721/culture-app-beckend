@@ -27,9 +27,13 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
     public Slice<ContentSummaryDto> searchContentDetails(
             Long subCategoryId,
             String keyword,
+            /*
             String artistName,
             String sportTeamName,
             String brandName,
+
+             */
+            String subjectName,
             String sortBy,
             Pageable pageable,
             Long memberId
@@ -43,11 +47,13 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
         // 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
         if (keyword!=null&&!keyword.isBlank()) builder.and(contentDetail.contentName.containsIgnoreCase(keyword));
 
+        /*
         // 중분류 키워드 기반 검색 ex) '가수이름' 검색 시 그 가수가 포함된 콘텐츠 모두 검색됨
         if (artistName!=null&&!artistName.isBlank()) builder.and(contentDetail.artistName.containsIgnoreCase(artistName));
         if (sportTeamName!=null&&!sportTeamName.isBlank()) builder.and(contentDetail.sportTeamName.containsIgnoreCase(sportTeamName));
         if (brandName!=null&&!brandName.isBlank()) builder.and(contentDetail.brandName.containsIgnoreCase(brandName));
-
+        */
+        if (subjectName!=null&&!subjectName.isBlank()) builder.and(contentDetail.subjectName.containsIgnoreCase(subjectName));
         return fetchSlice(builder, sortBy, pageable, memberId);
     }
 

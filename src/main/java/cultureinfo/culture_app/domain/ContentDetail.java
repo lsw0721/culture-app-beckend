@@ -30,12 +30,16 @@ public class ContentDetail {
     @Column(nullable = false)
     private String location; // 콘텐츠 지역(필수)
 
+    @Column(nullable = false)
+    private String address; // 콘텐츠 지역(필수)/ 도로명주소
+
     @Column(nullable = true)
-    private Long price = 0L; // 콘텐츠 가격(옵션)
+    private String price; // 콘텐츠 가격(옵션)
 
     @Column(nullable = true)
     private String picture; // 콘텐츠 사진 - URL 경로 설계 등 필요(옵션)
 
+    /*
     @Column(nullable = true)
     private String artistName; // 가수(그룹)명(옵션)
 
@@ -48,6 +52,16 @@ public class ContentDetail {
     @Lob
     @Column(nullable = true)
     private String detailsJson; // 각 컨테츠 별로 바뀌거나 조회가 필요 없는 세부내용 Json(옵션)
+    */
+
+    @Column(nullable = true)
+    private String subjectName; // 출연진(옵션)
+
+    @Column(nullable = true)
+    private String subject; // 주제, 줄거리(옵션)
+
+    @Column(nullable = true)
+    private String link; // 링크(옵션)
 
     @Column(nullable = false)
     private Long favoriteCount = 0L; // 찜 개수(필수)
@@ -106,7 +120,7 @@ public class ContentDetail {
                 .filter(url -> !url.isBlank())
                 .ifPresent(url -> this.picture = url);
     }
-
+    /*
     //아티스트 명 변경
     public void changeArtistName(String artist) {
         Optional.ofNullable(artist)
@@ -133,28 +147,36 @@ public class ContentDetail {
         Optional.ofNullable(json)
                 .ifPresent(j -> this.detailsJson = j);
     }
+    */
+
     @Builder
     public ContentDetail(String contentName,
                          LocalDateTime startDateTime,
                          LocalDateTime endDateTime,
                          String location,
-                         Long price,
+                         String address,
+                         String price,
                          String picture,
-                         String artistName,
-                         String sportTeamName,
-                         String brandName,
-                         String detailsJson,
+                         String subjectName,
+                         String subject,
+                         String link,
                          ContentSubCategory contentSubcategory) {
         this.contentName = contentName;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.location = location;
-        this.price = price == null ? 0L : price;
+        this.address = address;
+        this.price = price;
         this.picture = picture;
+        /*
         this.artistName = artistName;
         this.sportTeamName = sportTeamName;
         this.brandName = brandName;
         this.detailsJson = detailsJson;
+        */
+        this.subjectName = subjectName;
+        this.subject = subject;
+        this.link = link;
         this.contentSubcategory = contentSubcategory;
         this.favoriteCount = 0L;
     }

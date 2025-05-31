@@ -14,9 +14,13 @@ public class ContentSearchRequestDto {
     private Long subCategoryId; // 중분류
 
     private String keyword;     // 콘텐츠 이름 검색
+    private String subjectName; // 가수명, 스포츠 팀명 등등
+    /*
     private String artistName; // 가수명 검색 키워드
     private String sportTeamName;   // 스포츠 팀명 검색 키워드
     private String brandName;       // 브랜드명 검색 키워드
+    */
+
     private String sortBy;      // "favoriteCount", "startDateTime" 등
 
     @Min(0)

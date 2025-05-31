@@ -21,9 +21,15 @@ public class ContentDetailUpdateRequestDto {
     private Long favoriteCount; // 찜 개수
     private MultipartFile pictureFile; // 수정 시 업로드할 새 파일
     private String location; // 콘텐츠 위치
-    private Long price; // 콘텐츠 가격
+    private String address;
+    private String price; // 콘텐츠 가격
+    /*
     private String artistName; // 가수 이름
     private String sportTeamName; // 스포츠 팀 이름
     private String brandName; // 팝업 브랜드 이름
     private String detailsJson;
+    */
+    private String subjectName;
+    private String subject;
+    private String link;
 }

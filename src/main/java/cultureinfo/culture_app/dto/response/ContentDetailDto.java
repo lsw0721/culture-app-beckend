@@ -20,15 +20,21 @@ public class ContentDetailDto {
     private LocalDateTime startDateTime; // 콘텐츠 시작 시간
     private LocalDateTime endDateTime; // 콘텐츠 종료 시간
     private String location; // 콘텐츠 위치
+    private String address;
     private boolean isFavorite; // 찜 여부
     private Long favoriteCount; // 찜 개수
     private String picture; // 들어가는 사진 url
-    private Long price; // 콘텐츠 가격
+    private String price; // 콘텐츠 가격
+    /*
     private String artistName; // 가수 이름
     private String sportTeamName; // 스포츠 팀 이름
     private String brandName; // 팝업 브랜드 이름
+    */
+    private String subjectName;
+    private String subject;
+    private String link;
     private List<ContentSessionDto> sessions; // 일별 세션
-    private String detailsJson; // 세부정보
+    //private String detailsJson; // 세부정보
 
 
     public static ContentDetailDto from(ContentDetail d, boolean fav) {
@@ -43,14 +49,21 @@ public class ContentDetailDto {
                 .startDateTime(d.getStartDateTime())
                 .endDateTime(d.getEndDateTime())
                 .location(d.getLocation())
+                .address(d.getAddress())
                 .price(d.getPrice())
                 .isFavorite(fav)
                 .favoriteCount(d.getFavoriteCount())
                 .sessions(sessions)
+                .subjectName(d.getSubjectName())
+                .subject(d.getSubject())
+                .link(d.getLink())
+                /*
                 .artistName(d.getArtistName())
                 .sportTeamName(d.getSportTeamName())
                 .brandName(d.getBrandName())
                 .detailsJson(d.getDetailsJson())
+
+                 */
                 .build();
     }
 
