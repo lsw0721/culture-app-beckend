@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,15 +37,7 @@ public class ContentDetailCreateRequestDto {
 
     //업로드된 파일을 받을 필드
     private MultipartFile pictureFile;
-    /*
-    private String artistName;
-    private String sportTeamName;
-    private String brandName;
-    private String detailsJson;
-    */
-
-
-    private String subjectName;
+    private List<String> subjectNames;
     private String subject;
     private String link;
 

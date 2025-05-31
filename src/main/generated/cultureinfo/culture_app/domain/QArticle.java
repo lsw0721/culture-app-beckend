@@ -32,8 +32,6 @@ public class QArticle extends EntityPathBase<Article> {
 
     public final NumberPath<Long> commentCount = createNumber("commentCount", Long.class);
 
-    public final QContentDetail contentDetail;
-
     //inherited
     public final StringPath createBy = _super.createBy;
 
@@ -51,6 +49,8 @@ public class QArticle extends EntityPathBase<Article> {
     public final NumberPath<Long> likeCount = createNumber("likeCount", Long.class);
 
     public final QMember member;
+
+    public final QContentSubCategory subCategory;
 
     public final StringPath title = createString("title");
 
@@ -72,8 +72,8 @@ public class QArticle extends EntityPathBase<Article> {
 
     public QArticle(Class<? extends Article> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.contentDetail = inits.isInitialized("contentDetail") ? new QContentDetail(forProperty("contentDetail"), inits.get("contentDetail")) : null;
         this.member = inits.isInitialized("member") ? new QMember(forProperty("member")) : null;
+        this.subCategory = inits.isInitialized("subCategory") ? new QContentSubCategory(forProperty("subCategory"), inits.get("subCategory")) : null;
     }
 
 }

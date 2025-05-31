@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//일별 세션(소분류 상세)
+//일별 세션(소분류 상세) - 축제 전용
 public class ContentSession {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

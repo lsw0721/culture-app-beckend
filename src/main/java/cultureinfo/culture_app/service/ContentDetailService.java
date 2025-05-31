@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,13 +72,7 @@ public class ContentDetailService {
                 .address(req.getAddress())
                 .price(req.getPrice())
                 .picture(null)
-                /*
-                .artistName(req.getArtistName())
-                .sportTeamName(req.getSportTeamName())
-                .brandName(req.getBrandName())
-                .detailsJson(req.getDetailsJson())
-                */
-                .subjectName(req.getSubjectName())
+                .subjectNames(req.getSubjectNames())
                 .subject(req.getSubject())
                 .link(req.getLink())
                 .contentSubcategory(smallCat)
@@ -154,16 +147,12 @@ public class ContentDetailService {
             entity.changePeriod(dto.getStartDateTime(), dto.getEndDateTime());
         if (dto.getLocation() != null)
             entity.changeLocation(dto.getLocation());
-        /*
-        if (dto.getArtistName() != null)
-            entity.changeArtistName(dto.getArtistName());
-        if (dto.getSportTeamName() != null)
-            entity.changeSportTeamName(dto.getSportTeamName());
-        if (dto.getBrandName() != null)
-            entity.changeBrandName(dto.getBrandName());
-        if (dto.getDetailsJson() != null)
-            entity.changeDetailsJson(dto.getDetailsJson());
-        */
+        if (dto.getSubjectNames() != null)
+            entity.changeSubject(dto.getSubject());
+        if (dto.getSubjectNames() != null)
+            entity.changeSubjectNames(dto.getSubjectNames());
+        if(dto.getLink() != null)
+            entity.changeLink(dto.getLink());
         // 변경된 엔티티를 다시 DTO로 변환해 반환
         boolean fav = contentFavoriteService.isFavorite(securityUtil.getCurrentId(), contentDetailId);
         return ContentDetailDto.from(entity, fav);
@@ -203,11 +192,6 @@ public class ContentDetailService {
         return contentDetailRepository.searchContentDetails(
                 req.getSubCategoryId(),
                 req.getKeyword(),
-                /*
-                req.getArtistName(),
-                req.getSportTeamName(),
-                req.getBrandName(),
-                */
                 req.getSubjectName(),
                 req.getSortBy(),
                 PageRequest.of(req.getPage(), req.getSize()), // 몇 번째 페이지에서 몇 개의 콘텐츠를 가져올지
@@ -245,9 +229,7 @@ public class ContentDetailService {
                 Sort.by(req.getSortBy())
         );
         return contentDetailRepository.searchContentDetails(
-                req.getSubCategoryId(),  // 중분류 ID로만 필터
-                //null,                    // 콘텐츠 이름 키워드 없음
-                //null,                    // 가수명 검색 없음
+                req.getSubCategoryId(),  // 중분류 ID로만
                 null,                    // 스포츠 팀명 검색 없음
                 null,
                 req.getSortBy(),         // 정렬 기준

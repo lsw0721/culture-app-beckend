@@ -20,6 +20,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public static final QMember member = new QMember("member1");
 
+    public final NumberPath<Long> age = createNumber("age", Long.class);
+
     public final ListPath<ArticleLike, QArticleLike> articleLikes = this.<ArticleLike, QArticleLike>createList("articleLikes", ArticleLike.class, QArticleLike.class, PathInits.DIRECT2);
 
     public final ListPath<CommentLike, QCommentLike> commentLikes = this.<CommentLike, QCommentLike>createList("commentLikes", CommentLike.class, QCommentLike.class, PathInits.DIRECT2);

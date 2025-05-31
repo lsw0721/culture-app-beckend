@@ -15,19 +15,11 @@ public class ContentSearchRequestDto {
 
     private String keyword;     // 콘텐츠 이름 검색
     private String subjectName; // 가수명, 스포츠 팀명 등등
-    /*
-    private String artistName; // 가수명 검색 키워드
-    private String sportTeamName;   // 스포츠 팀명 검색 키워드
-    private String brandName;       // 브랜드명 검색 키워드
-    */
-
     private String sortBy;      // "favoriteCount", "startDateTime" 등
 
     @Min(0)
-
     private int   page = 0;// 0부터 시작
 
     @Min(1)
-
     private int   size = 20;         // 페이지 크기
 }

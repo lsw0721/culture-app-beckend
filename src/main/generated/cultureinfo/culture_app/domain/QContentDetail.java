@@ -22,11 +22,7 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public static final QContentDetail contentDetail = new QContentDetail("contentDetail");
 
-    public final StringPath subjectName = createString("subjectName");
-
-    public final StringPath artistName = createString("artistName");
-
-    public final StringPath brandName = createString("brandName");
+    public final StringPath address = createString("address");
 
     public final ListPath<ContentFavorite, QContentFavorite> contentFavorite = this.<ContentFavorite, QContentFavorite>createList("contentFavorite", ContentFavorite.class, QContentFavorite.class, PathInits.DIRECT2);
 
@@ -34,25 +30,27 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public final QContentSubCategory contentSubcategory;
 
-    public final StringPath detailsJson = createString("detailsJson");
-
     public final DateTimePath<java.time.LocalDateTime> endDateTime = createDateTime("endDateTime", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> favoriteCount = createNumber("favoriteCount", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath link = createString("link");
+
     public final StringPath location = createString("location");
 
     public final StringPath picture = createString("picture");
 
-    public final NumberPath<Long> price = createNumber("price", Long.class);
+    public final StringPath price = createString("price");
 
     public final ListPath<ContentSession, QContentSession> sessions = this.<ContentSession, QContentSession>createList("sessions", ContentSession.class, QContentSession.class, PathInits.DIRECT2);
 
-    public final StringPath sportTeamName = createString("sportTeamName");
-
     public final DateTimePath<java.time.LocalDateTime> startDateTime = createDateTime("startDateTime", java.time.LocalDateTime.class);
+
+    public final StringPath subject = createString("subject");
+
+    public final ListPath<String, StringPath> subjectNames = this.<String, StringPath>createList("subjectNames", String.class, StringPath.class, PathInits.DIRECT2);
 
     public QContentDetail(String variable) {
         this(ContentDetail.class, forVariable(variable), INITS);

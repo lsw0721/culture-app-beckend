@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 //콘텐츠 수정 요청용 dto
 @Getter
@@ -23,13 +24,7 @@ public class ContentDetailUpdateRequestDto {
     private String location; // 콘텐츠 위치
     private String address;
     private String price; // 콘텐츠 가격
-    /*
-    private String artistName; // 가수 이름
-    private String sportTeamName; // 스포츠 팀 이름
-    private String brandName; // 팝업 브랜드 이름
-    private String detailsJson;
-    */
-    private String subjectName;
+    private List<String> subjectNames;
     private String subject;
     private String link;
 }
