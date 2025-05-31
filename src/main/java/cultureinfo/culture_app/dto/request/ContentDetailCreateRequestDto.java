@@ -30,13 +30,24 @@ public class ContentDetailCreateRequestDto {
     @NotBlank
     private String location;
 
-    private Long price;
+    private String address;
+
+    private String price;
 
     //업로드된 파일을 받을 필드
     private MultipartFile pictureFile;
+    /*
     private String artistName;
     private String sportTeamName;
     private String brandName;
     private String detailsJson;
+    */
+
+
+    private String subjectName;
+    private String subject;
+    private String link;
+
+
 
 }
