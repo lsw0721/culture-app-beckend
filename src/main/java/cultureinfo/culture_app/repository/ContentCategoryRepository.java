@@ -11,6 +11,6 @@ import java.util.List;
 public interface ContentCategoryRepository extends JpaRepository<ContentCategory, Long> {
 
     // 중분류까지 함께 로딩하도록 EntityGraph 적용
-    @EntityGraph(attributePaths = {"subCategories"})
+    @EntityGraph(attributePaths = {"subcategories"})
     List<ContentCategory> findAll();
 }
