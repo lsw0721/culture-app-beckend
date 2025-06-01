@@ -24,7 +24,7 @@ public class ContentDetail {
     @Column(nullable = false)
     private LocalDateTime startDateTime;// 시작일자(필수)
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDateTime endDateTime; // 종료일자(필수)
 
     @Column(nullable = false)
