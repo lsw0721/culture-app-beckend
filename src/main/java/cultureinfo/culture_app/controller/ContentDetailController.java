@@ -28,7 +28,7 @@ public class ContentDetailController {
     // 목록 조회: 대분류(main), 중분류(sub), 소분류(small) 모두 옵션으로 받아 필터링
 
     @GetMapping
-    public Slice<ContentSummaryDto> search(@Valid ContentSearchRequestDto req) {
+    public Slice<ContentSummaryDto> search(@Valid @RequestBody ContentSearchRequestDto req) {
         return contentDetailService.searchByKeyword(req);
     }
 
