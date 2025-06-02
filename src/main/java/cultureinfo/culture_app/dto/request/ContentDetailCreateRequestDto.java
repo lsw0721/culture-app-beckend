@@ -36,7 +36,8 @@ public class ContentDetailCreateRequestDto {
     private String price;
 
     //업로드된 파일을 받을 필드
-    private MultipartFile pictureFile;
+    private MultipartFile thumbnailFile;
+    private List<MultipartFile> detailFiles;
     private List<String> subjectNames;
     private String subject;
     private String link;

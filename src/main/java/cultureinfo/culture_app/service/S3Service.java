@@ -26,12 +26,12 @@ public class S3Service {
     //파일 업로드
     public String upload(MultipartFile file, Long contentId) {
         try{
-            String fileName = contentId + ".jpg";
+            String fileName = contentId + "/" + file.getOriginalFilename();
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(fileName)
-                    .contentType("image/jpeg") //jpg만 받기
+                    .contentType(file.getContentType()) //jpg만 받기
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));

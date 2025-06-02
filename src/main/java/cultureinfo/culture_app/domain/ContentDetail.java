@@ -35,10 +35,10 @@ public class ContentDetail {
 
     @Column(nullable = true)
     private String price; // 콘텐츠 가격(옵션)
-
+    /*
     @Column(nullable = true)
     private String picture; // 콘텐츠 사진 - URL 경로 설계 등 필요(옵션)
-
+    */
     @Column(nullable = true)
     private String subject; // 주제, 줄거리(옵션)
 
@@ -68,6 +68,15 @@ public class ContentDetail {
     @Column(nullable = false)
     private List<String> subjectNames = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(
+            name = "content_detail_images",
+            joinColumns = @JoinColumn(name = "content_detail_id")
+    )
+    @Column(nullable = false)
+    @OrderColumn(name = "image_idx")
+    private List<String> imageUrls = new ArrayList<>();
+
     @Builder
     public ContentDetail(String contentName,
                          LocalDateTime startDateTime,
@@ -75,7 +84,8 @@ public class ContentDetail {
                          String location,
                          String address,
                          String price,
-                         String picture,
+                         //String picture,
+                         List<String> imageUrls,
                          List<String> subjectNames,
                          String subject,
                          String link,
@@ -86,7 +96,8 @@ public class ContentDetail {
         this.location = location;
         this.address = address;
         this.price = price;
-        this.picture = picture;
+        //this.picture = picture;
+        this.imageUrls = imageUrls != null ? imageUrls : new ArrayList<>();
         this.subjectNames = subjectNames != null ? subjectNames : new ArrayList<>();
         this.subject = subject;
         this.link = link;
@@ -129,12 +140,40 @@ public class ContentDetail {
                 .filter(loc -> !loc.isBlank())
                 .ifPresent(loc -> this.location = loc);
     }
-
+    /*
     // 사진 URL 변경 (옵션)
     public void changePicture(String picture) {
         Optional.ofNullable(picture)
                 .filter(url -> !url.isBlank())
                 .ifPresent(url -> this.picture = url);
+    }
+    */
+
+    // ↓↓↓ 이 부분도 List<String>을 그대로 덮어쓰도록 수정했습니다 ↓↓↓
+    public void changeImageUrls(List<String> imageUrls) {
+        this.imageUrls = null;
+    }
+
+    public void addImageUrl(String imageUrl) {
+        this.imageUrls.add(imageUrl);
+    }
+
+    public void addDetailImageUrl(String imageUrl) {
+        if (this.imageUrls.isEmpty()) {
+            this.imageUrls.add(null); // 0번 인덱스를 null로
+        }
+
+        this.imageUrls.add(imageUrl);
+    }
+
+    public void changeThumbnail(String imageUrl) {
+        this.imageUrls.set(0, imageUrl);
+    }
+
+    public void changeDetail() {
+        String keep = this.imageUrls.get(0);
+        this.imageUrls = new ArrayList<>();
+        this.imageUrls.set(0, keep);
     }
 
     // ↓↓↓ 이 부분도 List<String>을 그대로 덮어쓰도록 수정했습니다 ↓↓↓

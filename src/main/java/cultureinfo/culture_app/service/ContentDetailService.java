@@ -71,7 +71,7 @@ public class ContentDetailService {
                 .location(req.getLocation())
                 .address(req.getAddress())
                 .price(req.getPrice())
-                .picture(null)
+                .imageUrls(null)
                 .subjectNames(req.getSubjectNames())
                 .subject(req.getSubject())
                 .link(req.getLink())
@@ -81,16 +81,29 @@ public class ContentDetailService {
         // 4) 저장
         contentDetailRepository.save(entity);
 
-        //이미지 업로드 처리
-        MultipartFile imageFile = req.getPictureFile();
+        //썸네일 업로드 처리
+        MultipartFile imageFile = req.getThumbnailFile();
         if (imageFile != null && !imageFile.isEmpty()) {
             //s3 업로드
             String imageUrl = s3Service.upload(imageFile, entity.getId());
             //엔티티에 url 반영
-            entity.changePicture(imageUrl);
+            entity.addImageUrl(imageUrl);
         }
 
-        // 5) 반환용 DTO 변환 (찜 여부는 false로 초기화하거나 별도 로직)
+        // 세부정보 이미지 업로드 → 두 번째 이후 요소로 순서대로 URL 넣기
+        List<MultipartFile> detailFiles = req.getDetailFiles(); // List<MultipartFile>
+        if (detailFiles != null) {
+            for (MultipartFile detailFile : detailFiles) {
+                if (!detailFile.isEmpty()) {
+                    // fileName 예시: "42_day1_boothA.jpg", "42_day1_boothB.jpg" 등
+                    String detailUrl = s3Service.upload(detailFile, entity.getId());
+                    entity.addDetailImageUrl(detailUrl);
+                }
+            }
+        }
+
+
+            // 5) 반환용 DTO 변환 (찜 여부는 false로 초기화하거나 별도 로직)
         boolean isFav = contentFavoriteService.isFavorite(memberId, entity.getId());
         return ContentDetailDto.from(entity, isFav);
 
@@ -133,11 +146,23 @@ public class ContentDetailService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
         //이미지 수정
-        MultipartFile imageFile = dto.getPictureFile();
+        MultipartFile imageFile = dto.getThumbnailFile();
         if (imageFile != null && !imageFile.isEmpty()) {
             s3Service.deleteFile(contentDetailId);
             String imageUrl = s3Service.upload(imageFile,contentDetailId);
-            entity.changePicture(imageUrl);
+            entity.changeThumbnail(imageUrl);
+        }
+
+        List<MultipartFile> detailFiles = dto.getDetailFiles(); // List<MultipartFile>
+        if (detailFiles != null) {
+            entity.changeDetail();
+            for (MultipartFile detailFile : detailFiles) {
+                if (!detailFile.isEmpty()) {
+
+                    String detailUrl = s3Service.upload(detailFile, entity.getId());
+                    entity.addDetailImageUrl(detailUrl);
+                }
+            }
         }
 
         // DTO에 담긴 값만 선택적으로 업데이트
@@ -189,6 +214,7 @@ public class ContentDetailService {
     //페이지 단위 콘텐츠 리스트 조회(필터, 검색, 정렬, 페이징, 찜 여부 포함)
     public Slice<ContentSummaryDto> searchByKeyword(ContentSearchRequestDto req){
         Long memberId = securityUtil.getCurrentId();
+
         return contentDetailRepository.searchContentDetails(
                 req.getSubCategoryId(),
                 req.getKeyword(),
