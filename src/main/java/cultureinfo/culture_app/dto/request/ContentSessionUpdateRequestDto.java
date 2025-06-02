@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 //일별 세션 수정 요청
 @Getter
@@ -13,7 +14,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContentSessionUpdateRequestDto {
     @NotNull
-    private LocalDate sessionDate;
-    private String infoJson;
-    private MultipartFile pictureFile;
+    private String sessionDate;
+
+    private List<String> booths;
+
+    private List<String> artistNames;
 }

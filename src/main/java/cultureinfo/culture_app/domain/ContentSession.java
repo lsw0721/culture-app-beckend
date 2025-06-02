@@ -1,9 +1,8 @@
 package cultureinfo.culture_app.domain;
-
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,24 +18,28 @@ public class ContentSession {
     private ContentDetail contentDetail; //
 
     @Column(nullable = false)
-    private LocalDate sessionDate;
+    private String sessionDate; // 1일차, 2일차, 3일차
 
-    @Column(nullable = true)
-    private String picture; // 콘텐츠 사진 - URL 경로 설계 등 필요(옵션)
+    @ElementCollection
+    @CollectionTable(name = "session_booths", joinColumns = @JoinColumn(name = "session_id"))
+    @Column(name = "booth_name")
+    private List<String> booths = new ArrayList<>();
 
-    @Lob
-    @Column(nullable = true)
-    private String infoJson; // 세션별 추가 정보
+    @ElementCollection
+    @CollectionTable(name = "session_artists", joinColumns = @JoinColumn(name = "session_id"))
+    @Column(name = "artist_name")
+    private List<String> artistNames = new ArrayList<>();
 
-    public void changeSessionDate(LocalDate sessionDate) {
+    public void changeSessionDate(String sessionDate) {
         this.sessionDate = sessionDate;
     }
 
-    public void changeInfoJson(String infoJson) {
-        this.infoJson = infoJson;
+    public void changeArtistNames(List<String> artistNames) {
+        this.artistNames = artistNames;
     }
 
-    public void changePicture(String picture) {
-        this.picture = picture;
+    public void changeBooths(List<String> booths) {
+        this.booths = booths;
     }
+
 }

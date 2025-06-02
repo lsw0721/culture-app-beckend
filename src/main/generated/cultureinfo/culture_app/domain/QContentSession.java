@@ -22,15 +22,15 @@ public class QContentSession extends EntityPathBase<ContentSession> {
 
     public static final QContentSession contentSession = new QContentSession("contentSession");
 
+    public final ListPath<String, StringPath> artistNames = this.<String, StringPath>createList("artistNames", String.class, StringPath.class, PathInits.DIRECT2);
+
+    public final ListPath<String, StringPath> booths = this.<String, StringPath>createList("booths", String.class, StringPath.class, PathInits.DIRECT2);
+
     public final QContentDetail contentDetail;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath infoJson = createString("infoJson");
-
-    public final StringPath picture = createString("picture");
-
-    public final DatePath<java.time.LocalDate> sessionDate = createDate("sessionDate", java.time.LocalDate.class);
+    public final StringPath sessionDate = createString("sessionDate");
 
     public QContentSession(String variable) {
         this(ContentSession.class, forVariable(variable), INITS);
