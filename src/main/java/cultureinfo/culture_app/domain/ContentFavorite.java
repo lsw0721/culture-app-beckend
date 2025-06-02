@@ -5,6 +5,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -25,7 +28,7 @@ public class ContentFavorite {
     @JoinColumn(name = "content_detail_id")
     private ContentDetail contentDetail;
 
-    @CreationTimestamp                 
+    @CreationTimestamp
     private LocalDateTime createdAt;
         
     @Builder
