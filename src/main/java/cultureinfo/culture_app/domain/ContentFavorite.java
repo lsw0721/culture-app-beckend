@@ -25,6 +25,9 @@ public class ContentFavorite {
     @JoinColumn(name = "content_detail_id")
     private ContentDetail contentDetail;
 
+    @CreationTimestamp                 
+    private LocalDateTime createdAt;
+        
     @Builder
     public ContentFavorite(Member member, ContentDetail contentDetail) {
         this.member = member;
