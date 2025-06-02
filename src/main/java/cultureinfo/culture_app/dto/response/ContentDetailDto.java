@@ -28,15 +28,9 @@ public class ContentDetailDto {
     private List<String> subjectNames;
     private String subject;
     private String link;
-    private List<ContentSessionDto> sessions; // 일별 세션
-    //private String detailsJson; // 세부정보
 
 
     public static ContentDetailDto from(ContentDetail d, boolean fav) {
-        List<ContentSessionDto> sessions = d.getSessions().stream()
-                .map(s -> new ContentSessionDto(s.getId(), s.getSessionDate(), s.getInfoJson(), s.getPicture()))
-                .toList();
-
         return ContentDetailDto.builder()
                 .id(d.getId())
                 .contentName(d.getContentName())
@@ -49,7 +43,6 @@ public class ContentDetailDto {
                 .price(d.getPrice())
                 .isFavorite(fav)
                 .favoriteCount(d.getFavoriteCount())
-                .sessions(sessions)
                 .subjectNames(d.getSubjectNames())
                 .subject(d.getSubject())
                 .link(d.getLink())
