@@ -23,7 +23,7 @@ public class ContentDetailDto {
     private String address;
     private boolean isFavorite; // 찜 여부
     private Long favoriteCount; // 찜 개수
-    private String picture; // 들어가는 사진 url
+    private List<String> imageUrls; // 들어가는 사진 url
     private String price; // 콘텐츠 가격
     private List<String> subjectNames;
     private String subject;
@@ -40,7 +40,8 @@ public class ContentDetailDto {
         return ContentDetailDto.builder()
                 .id(d.getId())
                 .contentName(d.getContentName())
-                .picture(d.getPicture())
+                //.picture(d.getPicture())
+                .imageUrls(d.getImageUrls())
                 .startDateTime(d.getStartDateTime())
                 .endDateTime(d.getEndDateTime())
                 .location(d.getLocation())
