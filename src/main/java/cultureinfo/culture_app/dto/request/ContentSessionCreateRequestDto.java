@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,9 +21,9 @@ public class ContentSessionCreateRequestDto {
     private Long contentDetailId;
 
     @NotNull
-    private LocalDate sessionDate;
+    private String sessionDate;
 
-    private String infoJson;
+    private List<String> booths;
 
-    private MultipartFile pictureFile;
+    private List<String> artistNames;
 }

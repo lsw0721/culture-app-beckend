@@ -35,7 +35,7 @@ public class ContentSessionService {
         ContentDetail detail = contentDetailRepository.findById(contentDetailId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
         return detail.getSessions().stream()
-                .map(s -> new ContentSessionDto(s.getId(), s.getSessionDate(), s.getInfoJson(),s.getPicture()))
+                .map(ContentSessionDto::from)
                 .collect(Collectors.toList());
     }
 
@@ -61,19 +61,13 @@ public class ContentSessionService {
         ContentSession session = ContentSession.builder()
                 .contentDetail(detail)
                 .sessionDate(dto.getSessionDate())
-                .infoJson(dto.getInfoJson())
+                .booths(dto.getBooths())
+                .artistNames(dto.getArtistNames())
                 .build();
 
         contentSessionRepository.save(session);
 
-        //이미지 업로드
-        MultipartFile imageFile = dto.getPictureFile();
-        if (imageFile != null && !imageFile.isEmpty()) {
-            String url = s3Service.upload(imageFile, session.getId());
-            session.changePicture(url);
-        }
-
-        return new ContentSessionDto(session.getId(), session.getSessionDate(), session.getInfoJson(), session.getPicture());
+        return ContentSessionDto.from(session);
     }
 
     @Transactional
@@ -94,17 +88,11 @@ public class ContentSessionService {
         ContentSession session = contentSessionRepository.findById(sessionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        MultipartFile imageFile = dto.getPictureFile();
-        if (imageFile != null && !imageFile.isEmpty()) {
-            s3Service.deleteFile(sessionId);
-            String url = s3Service.upload(imageFile, sessionId);
-            session.changePicture(url);
-        }
         session.changeSessionDate(dto.getSessionDate());
-        if (dto.getInfoJson() != null) {
-            session.changeInfoJson(dto.getInfoJson());
-        }
-        return new ContentSessionDto(session.getId(), session.getSessionDate(), session.getInfoJson(), session.getPicture());
+        session.changeBooths(dto.getBooths());
+        session.changeArtistNames(dto.getArtistNames());
+
+        return ContentSessionDto.from(session);
     }
 
     @Transactional
@@ -126,7 +114,6 @@ public class ContentSessionService {
             throw new CustomException(ErrorCode.SESSION_NOT_FOUND);
         }
 
-        s3Service.deleteFile(sessionId);
         contentSessionRepository.deleteById(sessionId);
     }
 

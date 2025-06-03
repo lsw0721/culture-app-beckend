@@ -24,6 +24,8 @@ public class QContentFavorite extends EntityPathBase<ContentFavorite> {
 
     public final QContentDetail contentDetail;
 
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final QMember member;

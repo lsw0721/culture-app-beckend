@@ -36,11 +36,11 @@ public class QContentDetail extends EntityPathBase<ContentDetail> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final ListPath<String, StringPath> imageUrls = this.<String, StringPath>createList("imageUrls", String.class, StringPath.class, PathInits.DIRECT2);
+
     public final StringPath link = createString("link");
 
     public final StringPath location = createString("location");
-
-    public final StringPath picture = createString("picture");
 
     public final StringPath price = createString("price");
 
