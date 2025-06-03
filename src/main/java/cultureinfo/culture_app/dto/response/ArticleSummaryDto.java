@@ -26,7 +26,9 @@ public class ArticleSummaryDto {
                 .previewBody(article.getBody().length() > 20 ? article.getBody().substring(0, 20) + "..." : article.getBody())
                 .commentCount(article.getCommentCount())
                 .createDate(article.getCreateDate())
-                .subCategoryId(article.getSubCategory().getId())
+                .subCategoryId(
+                        article.getSubCategory() != null ? article.getSubCategory().getId() : null
+                )
                 .build();
     }
 }
