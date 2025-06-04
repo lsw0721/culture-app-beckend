@@ -27,14 +27,14 @@ public class ContentDetailController {
 
     // 목록 조회: 대분류(main), 중분류(sub), 소분류(small) 모두 옵션으로 받아 필터링
 
-    @GetMapping
+    @PostMapping("/search")
     public Slice<ContentSummaryDto> search(@Valid @RequestBody ContentSearchRequestDto req) {
         return contentDetailService.searchByKeyword(req);
     }
-
     /** 2. 대분류 전체 조회
      * GET /api/contents/categories
      */
+
     @GetMapping("/categories")
     public List<ContentCategoryDto> getAllCategories() {
         return contentDetailService.getAllContentCategories();
@@ -76,7 +76,6 @@ public class ContentDetailController {
         return contentDetailService.getContentDetail(id);
     }
 
-
      // 콘텐츠 생성
      // POST /api/contents
     @PostMapping
@@ -85,7 +84,6 @@ public class ContentDetailController {
     ) {
         return contentDetailService.createContentDetail(req);
     }
-
 
      // 콘텐츠 수정
      // PUT /api/contents/{id}
@@ -97,10 +95,8 @@ public class ContentDetailController {
         return contentDetailService.updateContentDetail(id, req);
     }
 
-
      // 콘텐츠 삭제
      // DELETE /api/contents/{id}
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         contentDetailService.deleteContentDetail(id);
