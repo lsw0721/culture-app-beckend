@@ -34,15 +34,19 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
     ) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        //ContentDetail -> 소분류 -> 중분류 -> 대분류의 id가 categoryId와 일치하는 콘텐츠만 검색
-        //타입 안전
-        //연관관계 자동 조인
+        //조건이 있을 경우에만 필터링 하도록 (없으면 전체 조회)
+        if (subCategoryId != null) {
+            builder.and(contentDetail.contentSubcategory.id.eq(subCategoryId));
+        }
 
         // 키워드 기반 검색 ex) '대동제' 검색 시 '2025 동국대 대동제' 검색됨
         if (keyword!=null&&!keyword.isBlank()) builder.and(contentDetail.contentName.containsIgnoreCase(keyword));
 
+        //subjectName(가수, 연예인 등)이 포함된 경우
         if (subjectName!=null&&!subjectName.isBlank())
             builder.and(contentDetail.subjectNames.any().containsIgnoreCase(subjectName));
+
+        //조건에 맞는 콘텐츠 페이징 조회
         return fetchSlice(builder, sortBy, pageable, memberId);
     }
 
@@ -103,8 +107,6 @@ public class ContentDetailRepositoryCustomImpl implements ContentDetailRepositor
                 .toList();
         return new SliceImpl<>(result, pageable, hasNext);
     }
-
-
 
 }
 
