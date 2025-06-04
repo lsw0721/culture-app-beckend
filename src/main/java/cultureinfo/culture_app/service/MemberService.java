@@ -200,4 +200,12 @@ public class MemberService {
 
     }
 
+    //닉네임 중복 검증
+    public void verifyNickname(String nickname){
+        if (memberRepository.existsByNickname(nickname)) {
+            throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+        }
+
+    }
+
 }
