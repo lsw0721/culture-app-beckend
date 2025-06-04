@@ -45,11 +45,12 @@ MemberController {
             return ResponseEntity.noContent().build(); //204
     }
 
+
     //회원가입
     //400 에러는 email 형식에 맞지 않거나, null 값을 받았을 때, 그럴 때 발생
     @PostMapping("/join")
     public ResponseEntity<String> join(@Valid @RequestBody JoinRequestDTO req) {
-        emailService.verifyAuthCode(req.getEmail(), req.getAuthcode());
+        emailService.checkEmailVerified(req.getEmail());
         String username = memberService.join(req);
         return ResponseEntity.status(HttpStatus.CREATED).body(username); //201
     }
@@ -58,6 +59,13 @@ MemberController {
     @PostMapping("/join/verify-username")
     public ResponseEntity<Void> verifyUsername(@Valid @RequestBody JoinUsernameRequestDto username){
         memberService.verifyUsername(username.getUsername());
+        return ResponseEntity.ok().build();
+    }
+
+    //이메일 코드 인증
+    @PostMapping("join/verify-emailcode")
+    public ResponseEntity<Void> verifyEmailCode(@RequestBody EmailVerifyRequestDto req) {
+        emailService.verifyAuthCode(req.getEmail(), req.getAuthcode());
         return ResponseEntity.ok().build();
     }
 

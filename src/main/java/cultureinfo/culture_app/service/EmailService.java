@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import cultureinfo.culture_app.dto.request.InquiryRequestDto;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -197,6 +198,18 @@ public class EmailService {
         }
         if (!stored.equals(inputCode)) {
             throw new CustomException(ErrorCode.AUTH_CODE_MISMATCH);
+        }
+
+        // 인증 완료 표시 저장 10분간
+        valueOperations.set("verified:" + email, "true", Duration.ofMinutes(10));
+    }
+
+    //인증된 이메일인지 확인
+    public void checkEmailVerified(String email) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String verified = valueOperations.get("verified:" + email);
+        if (!"true".equals(verified)) {
+            throw new CustomException(ErrorCode.EMAIL_NOT_VERIFIED);
         }
     }
 
