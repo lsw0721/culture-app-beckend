@@ -26,6 +26,8 @@ public enum ErrorCode {
     AUTH_CODE_MISMATCH("AUTH_011", HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다."),
     TEMP_PASSWORD_SAVE_FAILED("USER_010", HttpStatus.INTERNAL_SERVER_ERROR, "임시 비밀번호 저장에 실패했습니다."),
     INQUIRY_SEND_FAILED("MAIL_002", HttpStatus.BAD_GATEWAY, "문의 이메일 전송에 실패했습니다."),
+    EMAIL_NOT_VERIFIED("MAIL_003",HttpStatus.BAD_REQUEST, "이메일 인증에 실패했습니"),
+
 
     // 파일
     FILE_UPLOAD_FAILED("FILE_001", HttpStatus.BAD_GATEWAY, "파일 업로드 중 오류가 발생했습니다."),
