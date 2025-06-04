@@ -62,6 +62,13 @@ MemberController {
         return ResponseEntity.ok().build();
     }
 
+    //닉네임 중복 검증
+    @PostMapping("/join/verify-nickname")
+    public ResponseEntity<Void> verifyNickname(@Valid @RequestBody JoinNicknameRequestDto nickname){
+        memberService.verifyNickname(nickname.getNickname());
+        return ResponseEntity.ok().build();
+    }
+
     //이메일 코드 인증
     @PostMapping("join/verify-emailcode")
     public ResponseEntity<Void> verifyEmailCode(@RequestBody EmailVerifyRequestDto req) {
