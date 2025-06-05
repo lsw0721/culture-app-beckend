@@ -78,7 +78,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/members/join", "/api/members/sign-in", "/api/members/reissue", "/api/members/join/send-email", "/error",
-                        "/api/members/find-username", "/api/members/find-password/temp", "/api/members/join/verify-username")
+                        "/api/members/find-username", "/api/members/find-password/temp", "/api/members/join/verify-username", "/api/members/keywords")
                         .permitAll()
                         .requestMatchers("/test")
                         .hasRole("USER")
