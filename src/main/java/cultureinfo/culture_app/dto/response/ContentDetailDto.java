@@ -28,6 +28,7 @@ public class ContentDetailDto {
     private List<String> subjectNames;
     private String subject;
     private String link;
+    private Long subCategoryId;
 
 
     public static ContentDetailDto from(ContentDetail d, boolean fav) {
@@ -46,6 +47,7 @@ public class ContentDetailDto {
                 .subjectNames(d.getSubjectNames())
                 .subject(d.getSubject())
                 .link(d.getLink())
+                .subCategoryId(d.getContentSubcategory().getId()) //추가
                 .build();
     }
 
