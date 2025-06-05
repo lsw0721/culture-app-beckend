@@ -65,17 +65,17 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     // 전체 조회
-    public Slice<ArticleSummaryDto> getAllArticles(Pageable pageable) {
+    public Slice<ArticleSummaryDto> getAllArticles(Long subCategoryId, Pageable pageable) {
         // Slice<Article>을 리포지토리에서 받아오고
-        Slice<Article> slice = articleRepository.findAllBy(pageable);
+        Slice<Article> slice = articleRepository.findAllBy(subCategoryId, pageable);
         // DTO 로 매핑한 Slice 반환
         return slice.map(ArticleSummaryDto::from);
     }
 
     //검색(제목 or 본문의 일부 내용 입력 시 검색 가능)
     @Transactional(readOnly = true)
-    public Slice<ArticleSummaryDto> searchArticles(String keyword, Pageable pageable) {
-        Slice<Article> slice = articleRepository.searchByKeyword(keyword, pageable);
+    public Slice<ArticleSummaryDto> searchArticles(Long subCategoryId, String keyword, Pageable pageable) {
+        Slice<Article> slice = articleRepository.searchByKeyword(subCategoryId, keyword, pageable);
         // DTO로 매핑한 Slice 반환
         return slice.map(ArticleSummaryDto::from);
     }

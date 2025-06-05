@@ -41,5 +41,4 @@ public class ContentSession {
     public void changeBooths(List<String> booths) {
         this.booths = booths;
     }
-
 }

@@ -14,7 +14,7 @@ spring:
   # jpa
   jpa:
     hibernate:
-      ddl-auto: create        # 앱 실행 시 테이블을 **항상 새로 생성** (기존 데이터 삭제됨)
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
