@@ -1,6 +1,7 @@
 package cultureinfo.culture_app.controller;
 
 
+import cultureinfo.culture_app.ai.AiRunner;
 import cultureinfo.culture_app.dto.request.*;
 import cultureinfo.culture_app.dto.response.ArticleDto;
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
@@ -33,6 +34,7 @@ MemberController {
     private final ArticleService articleService;
     private final AnnouncementService announcementService;
     private final ContentFavoriteService contentFavoriteService;
+    private final AiRunner aiRunner;
 
     // --- 회원가입 및 로그인 ---
 
@@ -81,6 +83,7 @@ MemberController {
     @PatchMapping("/keywords")
     public ResponseEntity<Void> updateKeywords(@Valid @RequestBody UpdateKeywordRequestDto req) {
         memberService.updateKeyword(req);
+        aiRunner.runInBackground();
         return ResponseEntity.noContent().build();
     }
 
