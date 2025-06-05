@@ -36,23 +36,27 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
+    //조회 검색은 트정 중분류에서만 되도록
+
     // 게시글 전체 조회 -> slice 적용
-    @GetMapping
+    @GetMapping("/{subCategoryId}")
     public ResponseEntity<Slice<ArticleSummaryDto>> getAll(
+            @PathVariable Long subCategoryId,
             @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC)
             Pageable pageable){
-        Slice<ArticleSummaryDto> slice = articleService.getAllArticles(pageable);
+        Slice<ArticleSummaryDto> slice = articleService.getAllArticles(subCategoryId, pageable);
         return ResponseEntity.ok(slice);
     }
 
 
     //게시글 검색 -> slice 적용
-    @GetMapping("/search")
+    @GetMapping("/{subCategoryId}/search")
     public ResponseEntity<Slice<ArticleSummaryDto>> searchArticles(
+            @PathVariable Long subCategoryId,
             @RequestParam String keyword,
             @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        Slice<ArticleSummaryDto> slice = articleService.searchArticles(keyword, pageable);
+        Slice<ArticleSummaryDto> slice = articleService.searchArticles(subCategoryId,keyword, pageable);
         return ResponseEntity.ok(slice);
     }
 

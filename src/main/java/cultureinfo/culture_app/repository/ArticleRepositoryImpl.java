@@ -19,7 +19,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     //게시글 검색
     @Override
-    public Slice<Article> searchByKeyword(String keyword, Pageable pageable) {
+    public Slice<Article> searchByKeyword(Long subCategoryId, String keyword, Pageable pageable) {
         QArticle article = QArticle.article;
 
         //실제로 조회할 개수 + 1 (hasNext 판별용)
@@ -28,10 +28,12 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         List<Article> fetched = queryFactory
                 .selectFrom(article)
                 .where(
-                        //제목에 키워드가 있거나
-                        article.title.containsIgnoreCase(keyword)
-                                //본문에 키워드가 있거나
-                                .or(article.body.containsIgnoreCase(keyword))
+                        article.subCategory.id.eq(article.subCategory.id)
+                                .and(//제목에 키워드가 있거나
+                                        article.title.containsIgnoreCase(keyword)
+                                                //본문에 키워드가 있거나
+                                        .or(article.body.containsIgnoreCase(keyword)))
+
                 )
                 //날짜순 내림차순 정렬
                 .orderBy(article.createDate.desc())
@@ -51,12 +53,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public Slice<Article> findAllBy(Pageable pageable){
+    public Slice<Article> findAllBy(Long subCategoryId, Pageable pageable){
         QArticle article = QArticle.article;
         int size = pageable.getPageSize();
 
         List<Article> fetched = queryFactory
                 .selectFrom(article)
+                .where(article.subCategory.id.eq(article.subCategory.id))
                 .orderBy(article.createDate.desc())
                 .offset(pageable.getOffset())
                 .limit(size + 1)

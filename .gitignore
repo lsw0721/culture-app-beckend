@@ -3,7 +3,7 @@
 *.log
 *.ctxt
 .mtj.tmp/
-.yml
+*.yml
 
 # === Archives ===
 *.jar
