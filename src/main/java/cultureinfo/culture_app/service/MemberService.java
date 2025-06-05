@@ -93,8 +93,9 @@ public class MemberService {
     //키워드 저장
     @Transactional
     public void updateKeyword(UpdateKeywordRequestDto req) {
-        Long userId = securityUtil.getCurrentId();
-        Member member = memberRepository.findById(userId)
+        //Long userId = securityUtil.getCurrentId();
+        
+        Member member = memberRepository.findByUsername(req.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         if(req.getKeyword1() != null)
             member.updateKeyword1(req.getKeyword1());
