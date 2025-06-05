@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UpdateKeywordRequestDto {
+    private String username;
     private Keyword1 keyword1;
     private Keyword2 keyword2;
     private Keyword3 keyword3;
