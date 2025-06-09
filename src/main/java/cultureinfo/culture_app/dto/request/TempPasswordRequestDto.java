@@ -14,4 +14,6 @@ public class TempPasswordRequestDto {
     private String email;
     @NotBlank
     private String username;
+    @NotBlank
+    private String name;
 }
