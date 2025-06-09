@@ -106,7 +106,7 @@ MemberController {
     //비밀번호 찾기(임시 비밀번호 사용)
     @PostMapping("/find-password/temp")
     public ResponseEntity<Void> sendPasswordEmail(@Valid @RequestBody TempPasswordRequestDto req) {
-        emailService.sendTemporaryPassword(req.getUsername(), req.getEmail());
+        emailService.sendTemporaryPassword(req.getUsername(), req.getEmail(), req.getName());
         return ResponseEntity.noContent().build(); //204
     
     }
@@ -136,6 +136,13 @@ MemberController {
     ) {
         MemberDto updated = memberService.updateProfile(req);
         return ResponseEntity.ok(updated);
+    }
+
+    //프로필용 닉네임 중복 검증
+    @PostMapping("/profile/verify-nickname")
+    public ResponseEntity<Void> verifyMyNickname(@Valid @RequestBody JoinNicknameRequestDto nickname){
+        memberService.verifyMyNickname(nickname.getNickname());
+        return ResponseEntity.ok().build();
     }
 
     // 9) 비밀번호 변경
