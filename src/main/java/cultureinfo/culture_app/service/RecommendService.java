@@ -3,6 +3,7 @@ package cultureinfo.culture_app.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import cultureinfo.culture_app.dto.response.ContentDetailDto;
@@ -50,7 +51,15 @@ public class RecommendService {
 
         List<ContentDetail> contents = contentRepository.findAllById(contentIds);
 
-        return ContentDetailDto.fromList(contents, true); //임시로 true
+        Map<Long, ContentDetail> contentMap = contents.stream()
+                .collect(Collectors.toMap(ContentDetail::getId, Function.identity()));
+
+        // ID 순서대로 다시 정렬
+        List<ContentDetail> orderedContents = contentIds.stream()
+                .map(contentMap::get)
+                .collect(Collectors.toList());
+
+        return ContentDetailDto.fromList(orderedContents, true); //임시로 true
 
     }
     
