@@ -42,7 +42,7 @@ public class MemberService {
         if (memberRepository.existsByEmail(joinRequestDTO.getEmail())) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
-        if (memberRepository.existsByEmail(joinRequestDTO.getNickname())) {
+        if (memberRepository.existsByNickname(joinRequestDTO.getNickname())) {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
 
@@ -118,9 +118,9 @@ public class MemberService {
 
     //임시 비밀번호 저장
     @Transactional
-    public void saveTemporaryPassword(String username, String email, String tempPassword) {
+    public void saveTemporaryPassword(String username, String email, String tempPassword, String name) {
         Member member = memberRepository.findByUsername(username)
-                .filter(m ->  m.getEmail().equals(email))
+                .filter(m -> m.getEmail().equals(email) && m.getName().equals(name))
                 .orElseThrow(() ->
                         new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH));
         String encoded = passwordEncoder.encode(tempPassword);
@@ -129,9 +129,9 @@ public class MemberService {
 
     //username + email 검증 수행
     @Transactional(readOnly = true)
-    public void validateUsernameAndEmail(String username, String email) {
+    public void validateUsernameAndEmail(String username, String email, String name) {
         memberRepository.findByUsername(username)
-                .filter(m -> m.getEmail().equals(email))
+                .filter(m -> m.getEmail().equals(email) && m.getName().equals(name))
                 .orElseThrow(() ->
                         new CustomException(ErrorCode.ID_EMAIL_NOT_MATCH));
     }
@@ -167,6 +167,13 @@ public class MemberService {
         Long userId = securityUtil.getCurrentId();
         Member member = memberRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        if(!(member.getNickname().equals(req.getNickname()))) {
+            if (memberRepository.existsByNickname(req.getNickname())) {
+                throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+            }
+        }
+        
         member.update(req.getName(), req.getNickname(), req.getLocation(), req.getGender(), req.getEmail(), req.getAge());
         return MemberDto.from(member);
     }
@@ -205,6 +212,19 @@ public class MemberService {
     public void verifyNickname(String nickname){
         if (memberRepository.existsByNickname(nickname)) {
             throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+        }
+
+    }
+
+    //닉네임 중복 검증
+    public void verifyMyNickname(String nickname){
+        Long userId = securityUtil.getCurrentId();
+        Member member = memberRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if(!(member.getNickname().equals(nickname))) {
+            if (memberRepository.existsByNickname(nickname)) {
+                throw new CustomException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+            }
         }
 
     }
