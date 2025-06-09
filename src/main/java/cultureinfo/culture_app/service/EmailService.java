@@ -168,13 +168,13 @@ public class EmailService {
     // 비밀번호 찾기용 이메일 전송
     //아이디 이메일 검증 -> 임시 비밀번호 생성/저장 -> 메일 발송
     @Transactional
-    public void sendTemporaryPassword(String username, String recipientEmail) {
+    public void sendTemporaryPassword(String username, String recipientEmail, String name) {
         //이메일 존재 검증
-        memberService.validateUsernameAndEmail(username, recipientEmail);
+        memberService.validateUsernameAndEmail(username, recipientEmail, name);
         // 2) 임시 비밀번호 생성 및 저장
         String tempPassword = createPassword();
         try {
-            memberService.saveTemporaryPassword(username, recipientEmail, tempPassword);
+            memberService.saveTemporaryPassword(username, recipientEmail, tempPassword, name);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.TEMP_PASSWORD_SAVE_FAILED);
         }
