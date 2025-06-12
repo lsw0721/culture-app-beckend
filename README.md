@@ -3,5 +3,6 @@
 
 ---
 
-**프론트엔드**:[바로가기](https://github.com/woo-rug/festivalapp)
-**추천**:[바로가기](https://github.com/rnjsgurwns4/culture-ai)
+**프론트엔드**:[바로가기](https://github.com/woo-rug/festivalapp)  
+
+**추천모델**:[바로가기](https://github.com/rnjsgurwns4/culture-ai)
